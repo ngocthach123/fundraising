@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<info>
+    <name>Fundraising</name>
+    <key>Fundraising</key>
+    <version>1.0</version>
+    <description>Fundraising plugin</description>
+    <author>mooSocial</author>
+    <website>https://www.moosocial.com/</website>
+    <bootstrap>1</bootstrap>
+    <routes>1</routes>
+    <settings>
+        <setting>
+            <label>Item per pages</label>
+            <name>fundraising_item_per_pages</name>
+            <description></description>
+            <type>text</type>
+            <values>10</values>
+        </setting>
+        <setting>
+            <label>Enable Fundraising Plugin</label>
+            <name>fundraising_enabled</name>
+            <description></description>
+            <type>radio</type>
+            <values>
+                <value>
+                    <name>Disable</name>
+                    <value>0</value>
+                    <select>0</select>
+                </value>
+                <value>
+                    <name>Enable</name>
+                    <value>1</value>
+                    <select>1</select>
+                </value>
+            </values>
+        </setting>
+        <setting>
+            <label>Enable Fundraising Hashtag</label>
+            <name>fundraising_hashtag_enabled</name>
+            <description></description>
+            <type>radio</type>
+            <values>
+                <value>
+                    <name>Disable</name>
+                    <value>0</value>
+                    <select>0</select>
+                </value>
+                <value>
+                    <name>Enable</name>
+                    <value>1</value>
+                    <select>1</select>
+                </value>
+            </values>
+        </setting>
+        <setting>
+            <label>By pass force login</label>
+            <name>fundraising_consider_force</name>
+            <description>By pass force login</description>
+            <type>checkbox</type>
+            <values>
+                <value>
+                    <name></name>
+                    <value>1</value>
+                    <select>0</select>
+                </value>
+            </values>
+        </setting>
+    </settings>
+</info>
