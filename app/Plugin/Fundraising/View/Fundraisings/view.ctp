@@ -69,7 +69,7 @@ mooFundraising.initOnView();
         <div class="post_header">
             <div><span><?php echo __('Created by:');?> </span><?php echo $this->Moo->getName($campaign['User']);?></div>
             <div><span><?php echo __('Target:');?> </span><?php echo $currency['Currency']['symbol'].$campaign['Campaign']['target_amount'];?></div>
-            <div><span><?php echo __('Total raised:');?></span> <?php echo '88';?></div>
+            <div><span><?php echo __('Total raised:');?></span> <?php echo $currency['Currency']['symbol'].$campaign['Campaign']['raised_amount'];?></div>
             <div><span><?php echo __('Donations accepted util:');?></span> <?php echo $this->Time->format( $campaign['Campaign']['expire'], '%b %d, %Y', false, $utz);?></div>
             <a class="btn-action btn"><?php echo __('Donate now');?> </a>
         </div>

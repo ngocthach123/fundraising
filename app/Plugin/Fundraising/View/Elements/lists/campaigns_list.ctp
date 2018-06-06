@@ -3,6 +3,7 @@
 <?php if(Configure::read('Fundraising.fundraising_enabled') == 1): ?>
 <ul class="campaign-content-list">
 <?php
+ $currency = Configure::read('Config.currency');
 $fundraisingHelper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
 if (!empty($campaigns) && count($campaigns) > 0)
 {
@@ -29,7 +30,7 @@ if (!empty($campaigns) && count($campaigns) > 0)
                     <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                         <?php if ( ($campaign['Campaign']['user_id'] == $uid ) || ( !empty($cuser['Role']['is_admin']) ) ): ?>
                         <li><?php echo $this->Html->link(__( 'Edit Campaign'), array(
-                          'plugin' => 'Campaign',
+                          'plugin' => 'Fundraising',
                           'controller' => 'fundraisings',
                           'action' => 'create',
                           $campaign['Campaign']['id']
@@ -49,7 +50,20 @@ if (!empty($campaigns) && count($campaigns) > 0)
             <?php else: ?>
                 <a class="title" href="<?php echo  $this->request->base ?>/fundraisings/view/<?php echo  $campaign['Campaign']['id'] ?>/<?php echo  seoUrl($campaign['Campaign']['title']) ?>"><?php echo  h($campaign['Campaign']['title']) ?></a>
             <?php endif; ?>
-
+            <div class="extra_info">
+                <?php if(!empty($topic['LastDonor'])):?>
+                    <?php echo __( 'Last donated by %s', $this->Moo->getName($campaign['LastDonor'], false))?>
+                    <?php echo $this->Moo->getTime( $campaign['Campaign']['last_donate'], Configure::read('core.date_format'), $utz )?>
+                <?php else:?>
+                    <?php echo __( 'Posted by %s', $this->Moo->getName($campaign['User'], false))?>
+                    <?php echo $this->Moo->getTime( $campaign['Campaign']['created'], Configure::read('core.date_format'), $utz )?>
+                <?php endif;?>
+            </div>
+            <div class="list-campaign-info">
+                <span><?php echo __('Target:');?></span> <?php echo $currency['Currency']['symbol'].$campaign['Campaign']['target_amount'];?>,
+                <span><?php echo __('Total raised:');?></span> <?php echo $currency['Currency']['symbol'].$campaign['Campaign']['raised_amount'];?>,
+                <span><?php echo __('Donation expired until:');?></span> <?php echo $this->Time->format( $campaign['Campaign']['expire'], '%b %d, %Y', false, $utz);?>
+            </div>
 			<div class="campaign-description-truncate">
                             <div>
                             <?php echo $this->Text->convert_clickable_links_for_hashtags($this->Text->truncate(strip_tags(str_replace(array('<br>','&nbsp;'), array(' ',''), $campaign['Campaign']['body'])), 200, array('exact' => false)), Configure::read('Fundraising.fundraising_hashtag_enabled')) ?>

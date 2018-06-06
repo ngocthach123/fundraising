@@ -146,7 +146,7 @@
                                             <div id="campaign_thumnail"></div>
                                             <div id="campaign_thumnail_preview">
                                                 <?php if (!empty($campaign['Campaign']['thumbnail'])): ?>
-                                                    <img width="150" src="<?php echo $campaignHelper->getImage($campaign, array('prefix' => '150_square'))?>" />
+                                                    <img width="150" src="<?php echo $fundraisingHelper->getImage($campaign, array('prefix' => '150_square'))?>" />
                                                 <?php else: ?>
                                                     <img width="150" src="" style="display: none;" />
                                                 <?php endif; ?>

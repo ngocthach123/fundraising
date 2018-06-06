@@ -31,6 +31,10 @@ class Campaign extends FundraisingAppModel {
 
     public $belongsTo = array('User' => array('counterCache' => true,
         ),
+        'LastDonor' => array(
+            'className' => 'User',
+            'foreignKey' => 'lastdonor_id'
+        ),
         'Category' => array(
             'counterCache' => 'item_count',
             'counterScope' => array('Category.type' => 'Fundraising')
@@ -153,7 +157,9 @@ class Campaign extends FundraisingAppModel {
 
             case 'search':
                 if ($param)
-                    $cond = array('MATCH(Campaign.title, Campaign.body) AGAINST(? IN BOOLEAN MODE)' => urldecode($param));
+                    $cond['AND'] = array(
+                        'OR' => array('Campaign.title LIKE '=>'%'.urldecode($param).'%','Campaign.body LIKE '=>'%'.urldecode($param).'%')
+                    );
 
                 break;
 

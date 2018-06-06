@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}campaigns` (
   `dislike_count` smallint(5) unsigned NOT NULL DEFAULT '0',
   `share_count` int(11) DEFAULT '0',
   `like_count` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `lastdonor_id` INT NOT NULL ,
+  `last_donate` DATETIME NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
