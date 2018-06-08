@@ -170,7 +170,7 @@ class FundraisingsController extends FundraisingAppController {
         if (!empty($this->request->data['id'])) {
             // check edit permission
             $campaign = $this->Campaign->findById($this->request->data['id']);
-            $this->_checkTopic($campaign, true);
+            $this->_checkCampaign($campaign, true);
 
             $this->Campaign->id = $this->request->data['id'];
         } else {
@@ -188,6 +188,11 @@ class FundraisingsController extends FundraisingAppController {
             unset($this->Campaign->validate['paypal_email']);
         }elseif(empty($this->request->data['bank'])){
             unset($this->Campaign->validate['bank_info']);
+        }
+
+        if(!empty($this->request->data['unlimited'])){
+            $this->request->data['expire'] = '';
+            unset($this->Campaign->validate['expire']);
         }
 
         $this->Campaign->set($this->request->data);
@@ -264,7 +269,7 @@ class FundraisingsController extends FundraisingAppController {
         }
     }
 
-    public function view($id = null) {
+    public function view($id = null, $type = 'info') {
         $id = intval($id);
         
         $this->Campaign->recursive = 2;
@@ -283,12 +288,23 @@ class FundraisingsController extends FundraisingAppController {
         $this->Campaign->recursive = 0;
         
         $this->_checkExistence($campaign);
-        $this->_checkPermission(array('aco' => 'topic_view'));
+        $this->_checkPermission(array('aco' => 'fundraising_view'));
         $this->_checkPermission( array('user_block' => $campaign['Campaign']['user_id']) );
         
         $uid = $this->Auth->user('id');
 
-        $this->_getCampaignDetail($campaign);
+        switch ($type){
+            case 'mail':
+                $this->set('campaign', $campaign);
+                break;
+            case 'donor':
+                $this->_getCampaignDonor($campaign['Campaign']['id']);
+                $this->set('campaign', $campaign);
+                break;
+            default:
+                $this->_getCampaignDetail($campaign);
+                break;
+        }
         
         $this->loadModel('Tag');
         $tags = $this->Tag->getContentTags($id, 'Fundraising_Campaign');
@@ -299,22 +315,18 @@ class FundraisingsController extends FundraisingAppController {
             $areFriends = $this->Friend->areFriends($uid, $campaign['User']['id']);
         }
         MooCore::getInstance()->setSubject($campaign);
+        $this->loadModel('Like');
         $likes = $this->Like->getLikes($id, 'Fundraising_Campaign');
         $dislikes = $this->Like->getDisLikes($id, 'Fundraising_Campaign');
 
-        $this->loadModel('NotificationStop');
-        $notification_stop = $this->NotificationStop->find('count', array('conditions' => array('item_type' => 'campaign',
-                        'item_id' => $id,
-                        'user_id' => $uid)
-                        ));
-        $this->set('notification_stop', $notification_stop);
-        
         $this->set('areFriends', $areFriends);
         $this->set('tags', $tags);
         $this->set('likes', $likes);
         $this->set('dislikes', $dislikes);
 
         $this->set('title_for_layout', htmlspecialchars($campaign['Campaign']['title']));
+        $this->set('type', $type);
+
     	$description = $this->getDescriptionForMeta($campaign['Campaign']['body']);
         if ($description) {
             $this->set('description_for_layout', $description);
@@ -329,33 +341,27 @@ class FundraisingsController extends FundraisingAppController {
             $this->set('mooPageKeyword', $this->getKeywordsForMeta($tags.$description));
         }
 
-        // set og:image
-        if ($campaign['Campaign']['thumbnail']) {
-            $mooHelper = MooCore::getInstance()->getHelper('Core_Moo');
-            $this->set('og_image', $mooHelper->getImageUrl($campaign, array('prefix' => '850')));
-            
-        }
-
     }
-    
-    public function profile_user_topic($uid = null){
-        $uid = intval($uid);
-        $this->loadModel('Topic.Topic');
-        $page = (!empty($this->request->named['page'])) ? $this->request->named['page'] : 1;	
 
-        $topics = $this->Topic->getTopics( 'user', $uid, $page );
+    private function _getCampaignDonor($id){
+        $this->loadModel('Fundraising.CampaignDonor');
+
+        $page = (!empty($this->request->named['page'])) ? $this->request->named['page'] : 1;
+        $donors = $this->CampaignDonor->getDonors($id, $page);
+        $more_donors = $this->CampaignDonor->getDonors($id, $page+1);
         $more_result = 0;
-        $more_topics = $this->Topic->getTopics( 'user', $uid, $page  + 1);
-        if(!empty($more_topics))
+        if (!empty($more_donors))
             $more_result = 1;
-        $this->set('topics', $topics);
-        $this->set('more_url', '/topics/profile_user_topic/' . $uid . '/page:' . ( $page + 1 ));
-        $this->set('user_id', $uid);
+
+        $this->set('more_url', '/fundraisings/ajax_donor/' . $id . '/page:'.($page+1));
+        $this->set('donors', $donors);
         $this->set('more_result', $more_result);
-        if ($page > 1)
-            $this->render('/Elements/lists/topics_list');
-        else
-            $this->render('Topic.Topics/profile_user_topic');
+    }
+
+    public function ajax_donor($id){
+        $this->_getCampaignDonor($id);
+
+        $this->render('/Elements/lists/donors_list');
     }
 
     private function _getCampaignDetail($campaign) {
@@ -392,155 +398,32 @@ class FundraisingsController extends FundraisingAppController {
 
     public function do_delete($id = null) {
         $id = intval($id);
-        $topic = $this->Topic->findById($id);
         $this->ajax_delete($id);
 
-        $this->Session->setFlash(__( 'Topic has been deleted'));
-        if ($topic['Topic']['group_id'])
-        {
-        	$this->redirect('/groups/view/'.$topic['Topic']['group_id'].'/tab:topics');
-        	return;
-        }
-        $this->redirect('/topics');
+        $this->Session->setFlash(__( 'Campaign has been deleted'));
+        $this->redirect('/fundraisings');
     }
 
     public function ajax_delete($id = null) {
         $id = intval($id);
         $this->autoRender = false;
 
-        $topic = $this->Topic->findById($id);
-        $this->_checkTopic($topic, true);
+        $campaign = $this->Campaign->findById($id);
+        $this->_checkCampaign($campaign, true);
 
-        $this->Topic->deleteTopic($topic);
-        $this->Topic->deleteTopic($topic);
-        $cakeEvent = new CakeEvent('Plugin.Controller.Topic.afterDeleteTopic', $this, array('item' => $topic));
+        $this->Campaign->deleteCampaign($campaign);
+        $cakeEvent = new CakeEvent('Plugin.Controller.Campaign.afterDeleteCampaign', $this, array('item' => $campaign));
         $this->getEventManager()->dispatch($cakeEvent);
     }
 
-    public function do_pin($id = null) {
-        $id = intval($id);
-        $topic = $this->Topic->findById($id);
-        $this->_checkTopic($topic);
-
-        $this->Topic->id = $id;
-        $this->Topic->save(array('pinned' => 1));
-        
-        // event
-        $cakeEvent = new CakeEvent('Plugin.Controller.Topic.afterPin', $this, array('item' => $topic));
-        $this->getEventManager()->dispatch($cakeEvent);
-
-        $this->Session->setFlash(__( 'Topic has been pinned'));
-
-        if (!empty($topic['Topic']['group_id']))
-            $this->redirect('/groups/view/' . $topic['Topic']['group_id'] . '/topic_id:' . $id);
-        else
-            $this->redirect('/topics/view/' . $id);
-    }
-
-    public function do_unpin($id = null) {
-        $id = intval($id);
-        $topic = $this->Topic->findById($id);
-        $this->_checkTopic($topic);
-
-        $this->Topic->id = $id;
-        $this->Topic->save(array('pinned' => 0));
-        
-        // event
-        $cakeEvent = new CakeEvent('Plugin.Controller.Topic.afterUnPin', $this, array('item' => $topic));
-        $this->getEventManager()->dispatch($cakeEvent);
-
-        $this->Session->setFlash(__( 'Topic has been unpinned'));
-
-        if (!empty($topic['Topic']['group_id']))
-            $this->redirect('/groups/view/' . $topic['Topic']['group_id'] . '/topic_id:' . $id);
-        else
-            $this->redirect('/topics/view/' . $id);
-    }
-
-    public function do_lock($id = null) {
-        $id = intval($id);
-        $topic = $this->Topic->findById($id);
-        $this->_checkTopic($topic);
-
-        $this->Topic->id = $id;
-        $this->Topic->save(array('locked' => 1));
-        
-        // event
-        $cakeEvent = new CakeEvent('Plugin.Controller.Topic.afterLock', $this, array('item' => $topic));
-        $this->getEventManager()->dispatch($cakeEvent);
-
-        $this->Session->setFlash(__( 'Topic has been locked'));
-
-        if (!empty($topic['Topic']['group_id']))
-            $this->redirect('/groups/view/' . $topic['Topic']['group_id'] . '/topic_id:' . $id);
-        else
-            $this->redirect('/topics/view/' . $id);
-    }
-
-    public function do_unlock($id = null) {
-        $id = intval($id);
-        $topic = $this->Topic->findById($id);
-        $this->_checkTopic($topic);
-
-        $this->Topic->id = $id;
-        $this->Topic->save(array('locked' => 0));
-
-        $this->Session->setFlash(__( 'Topic has been unlocked'));
-
-        if (!empty($topic['Topic']['group_id']))
-            $this->redirect('/groups/view/' . $topic['Topic']['group_id'] . '/topic_id:' . $id);
-        else
-            $this->redirect('/topics/view/' . $id);
-    }
-
-    private function _checkTopic($topic, $allow_author = false) {
-        $this->_checkExistence($topic);
+    private function _checkCampaign($campaign, $allow_author = false) {
+        $this->_checkExistence($campaign);
         $admins = array();
 
         if ($allow_author)
-            $admins = array($topic['User']['id']); // topic creator
-
-            
-// if it's a group topic then group admins can do it
-        if (!empty($topic['Topic']['group_id'])) {
-            $this->loadModel('Group.GroupUser');
-
-            $group_admins = $this->GroupUser->getUsersList($topic['Topic']['group_id'], GROUP_USER_ADMIN);
-            $admins = array_merge($admins, $group_admins);
-        }
+            $admins = array($campaign['User']['id']); // campaign creator
 
         $this->_checkPermission(array('admins' => $admins));
-    }
-
-    public function admin_index() {
-        if (!empty($this->request->data['keyword']))
-            $this->redirect('/admin/topics/index/keyword:' . $this->request->data['keyword']);
-
-        $cond = array();
-        if (!empty($this->request->named['keyword']))
-            $cond['MATCH(Topic.title) AGAINST(? IN BOOLEAN MODE)'] = $this->request->named['keyword'];
-
-        $topics = $this->paginate('Topic', $cond);
-
-        $this->loadModel('Category');
-        $categories = $this->Category->getCategoriesList('Topic');
-
-        $this->set('topics', $topics);
-        $this->set('categories', $categories);
-        $this->set('title_for_layout', 'Topics Manager');
-    }
-
-    public function admin_move() {
-        if (!empty($_POST['topics']) && !empty($this->request->data['category'])) {
-            foreach ($_POST['topics'] as $topic_id) {
-                $this->Topic->id = $topic_id;
-                $this->Topic->save(array('category_id' => $this->request->data['category']));
-            }
-
-            $this->Session->setFlash(__('Topic has been moved'));
-        }
-
-        $this->redirect($this->referer());
     }
 
     public function popular() {
@@ -559,4 +442,167 @@ class FundraisingsController extends FundraisingAppController {
         }
     }
 
+    public function ajax_invite($campaign_id = null) {
+        $campaign_id = intval($campaign_id);
+        $this->_checkPermission(array('confirm' => true));
+
+        $this->set('campaign_id', $campaign_id);
+    }
+
+    public function ajax_sendInvite() {
+        $this->autoRender = false;
+        $this->_checkPermission(array('confirm' => true));
+        $cuser = $this->_getUser();
+
+        $campaign = $this->Campaign->findById($this->request->data['campaign_id']);
+
+        if ($this->request->data['invite_type'] == 1)
+        {
+            if (!empty($this->request->data['friends'])) {
+                $friends = explode(',', $this->request->data['friends']);
+
+                $this->loadModel('Notification');
+                $this->Notification->record(array('recipients' => $friends,
+                    'sender_id' => $cuser['id'],
+                    'action' => 'fundraising_campaign_invite',
+                    'url' => '/fundraisings/view/' . $this->request->data['campaign_id'],
+                    'params' => h($campaign['Campaign']['title']),
+                    'plugin' => 'Fundraising'
+                ));
+            } else {
+                return $this->_jsonError(__('Recipient is required'));
+            }
+        }
+        else
+        {
+            if (!empty($this->request->data['emails'])) {
+                // check captcha
+                $checkRecaptcha = MooCore::getInstance()->isRecaptchaEnabled();
+                $recaptcha_privatekey = Configure::read('core.recaptcha_privatekey');
+                $is_mobile = $this->viewVars['isMobile'];
+                if ( $checkRecaptcha && !$is_mobile)
+                {
+                    App::import('Vendor', 'recaptchalib');
+                    $reCaptcha = new ReCaptcha($recaptcha_privatekey);
+                    $resp = $reCaptcha->verifyResponse(
+                        $_SERVER["REMOTE_ADDR"], $_POST["g-recaptcha-response"]
+                    );
+
+                    if ($resp != null && !$resp->success) {
+                        return	$this->_jsonError(__('Invalid security code'));
+                    }
+                }
+                $emails = explode(',', $this->request->data['emails']);
+
+                $i = 1;
+
+
+                foreach ($emails as $email) {
+                    $invite_checksum = uniqid();
+                    if ($i <= 10) {
+                        if (Validation::email(trim($email))) {
+                            $ssl_mode = Configure::read('core.ssl_mode');
+                            $http = (!empty($ssl_mode)) ? 'https' :  'http';
+                            $this->MooMail->send(trim($email),'fundraising_invite_none_member',
+                                array(
+                                    'campaign_title' => $campaign['Campaign']['moo_title'],
+                                    'link' => $http.'://'.$_SERVER['SERVER_NAME'].$campaign['Campaign']['moo_href'].'/'.$invite_checksum,
+                                    'email' => trim($email),
+                                    'sender_title' => $cuser['name'],
+                                    'sender_link' => $http.'://'.$_SERVER['SERVER_NAME'].$cuser['moo_href'],
+                                )
+                            );
+                        }
+                    }
+                    $i++;
+                }
+            }
+            else
+            {
+                return	$this->_jsonError(__d('forum', 'Recipient is required'));
+            }
+        }
+
+        $response = array();
+        $response['result'] = 1;
+        $response['msg'] = __d('forum', 'Your invitations have been sent.') . ' <a href="javascript:void(0)" onclick="$(\'#themeModal .modal-content\').load(\''.$this->request->base.'/fundraisings/ajax_invite/'.$this->request->data['campaign_id'].'\');">' . __('Invite more friends') . '</a>';
+        echo json_encode($response);
+    }
+
+    public function ajax_email_setting(){
+
+    }
+
+    public function donate($id = null){
+        $id = intval($id);
+        $campaign= $this->Campaign->findById($id);
+        $this->_checkExistence($campaign);
+
+        $this->set('campaign',$campaign);
+    }
+
+    public function pay_offline($send = 0){
+        if(!empty($this->request->data)){
+            $data = $this->request->data;
+            $this->loadModel('Fundraising.CampaignDonor');
+            $this->CampaignDonor->set($data);
+            $this->_validateData($this->CampaignDonor);
+
+            //validate
+            if(empty($data['accept_term'])){
+                $response = array(
+                    'result' => 0,
+                    'message' => __('You must accept the terms and conditions'),
+                );
+                echo json_encode($response);exit;
+            }
+
+            if($send){
+                // check captcha
+                $checkRecaptcha = MooCore::getInstance()->isRecaptchaEnabled();
+                $recaptcha_privatekey = Configure::read('core.recaptcha_privatekey');
+                if ( $checkRecaptcha)
+                {
+                    App::import('Vendor', 'recaptchalib');
+                    $reCaptcha = new ReCaptcha($recaptcha_privatekey);
+                    $resp = $reCaptcha->verifyResponse(
+                        $_SERVER["REMOTE_ADDR"], $_POST["g-recaptcha-response"]
+                    );
+
+                    if ($resp != null && !$resp->success) {
+                        echo __('Invalid security code');
+                        return;
+                    }
+                }
+
+                $data['user_id'] = empty($data['anonymous']) ? $this->Auth->user('id') : 0;
+                $data['method'] = 'offline';
+                $data['status'] = 0;
+                $this->CampaignDonor->set($data);
+                if($this->CampaignDonor->save()){
+                    $this->Campaign->updateCounter($data['target_id'], 'donor_count', array('CampaignDonor.target_id' => $data['target_id']), 'CampaignDonor');
+                    $this->Session->setFlash(__('Successfully sent'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in'));
+
+                    $response = array(
+                        'result' => 1,
+                        'redirect' => $this->request->base.'/fundraisings/view/'.$data['target_id'],
+                    );
+                    echo json_encode($response);exit;
+
+                }else{
+                    $response = array(
+                        'result' => 0,
+                        'message' => __('An error has occurred, please try again'),
+                    );
+                    echo json_encode($response);exit;
+                }
+
+            }
+
+            $response = array(
+                'result' => 1,
+            );
+            echo json_encode($response);exit;
+        }
+    }
 }

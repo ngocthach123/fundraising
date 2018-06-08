@@ -9,7 +9,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD
         define(['jquery', 'mooBehavior', 'mooFileUploader', 'mooAjax', 'mooOverlay', 'mooAlert', 'mooPhrase', 'mooGlobal',
-            'tinyMCE', 'mooUser','picker_date'], factory);
+            'tinyMCE', 'mooUser', 'mooButton', 'picker_date', 'tagsinput'], factory);
     } else if (typeof exports === 'object') {
         // Node, CommonJS-like
         module.exports = factory(require('jquery'));
@@ -17,7 +17,7 @@
         // Browser globals (root is window)
         root.mooFundraising = factory();
     }
-}(this, function ($, mooBehavior, mooFileUploader, mooAjax, mooOverlay, mooAlert, mooPhrase, mooGlobal, tinyMCE, mooUser) {
+}(this, function ($, mooBehavior, mooFileUploader, mooAjax, mooOverlay, mooAlert, mooPhrase, mooGlobal, tinyMCE, mooUser, mooButton) {
 
     var initOnCreate = function () {
         $('#saveBtn').unbind('click');
@@ -33,7 +33,7 @@
             element: $('#attachments_upload')[0],
             autoUpload: false,
             text: {
-                uploadButton: '<div class="upload-section"><i class="fa fa-file-text-o"></i>' + mooPhrase.__('drag_photo') +' </div>'
+                uploadButton: '<div class="upload-section"><i class="material-icons">photo_camera</i>' + mooPhrase.__('drag_or_click_here_to_upload_photo') +' </div>'
             },
             validation: {
                 allowedExtensions: mooConfig.photoExt,
@@ -83,12 +83,6 @@
         // bind action to button delete
         deleteCampaign();
 
-        // toggleUploader
-        $('#toggleUploader').unbind('click');
-        $('#toggleUploader').on('click', function(){
-            $('#images-uploader').slideToggle();
-        });
-
         $(".datepicker").pickadate({
             monthsFull: [mooPhrase.__('january'), mooPhrase.__('february'), mooPhrase.__('march'), mooPhrase.__('april'), mooPhrase.__('may'), mooPhrase.__('june'), mooPhrase.__('july'), mooPhrase.__('august'), mooPhrase.__('september'), mooPhrase.__('october'), mooPhrase.__('november'), mooPhrase.__('december')],
             monthsShort: [mooPhrase.__('jan'), mooPhrase.__('feb'), mooPhrase.__('mar'), mooPhrase.__('apr'), mooPhrase.__('may'), mooPhrase.__('jun'), mooPhrase.__('jul'), mooPhrase.__('aug'), mooPhrase.__('sep'), mooPhrase.__('oct'), mooPhrase.__('nov'), mooPhrase.__('dec')],
@@ -102,6 +96,11 @@
 
             }
         });
+
+        if(typeof google.maps.places !== 'undefined')
+        {
+            var autocomplete = new google.maps.places.Autocomplete(document.getElementById('location'));
+        }
     }
 
     var toggleUploader = function() {
@@ -113,15 +112,14 @@
         mooOverlay.registerImageOverlay();
 
         // bind action to button delete
-        deleteTopic();
+        deleteCampaign();
     }
 
-    // app/Plugin/Topic/View/Elements/lists/topics_list.ctp
     var initOnListing = function(){
         mooBehavior.initMoreResults();
 
         // bind action to button delete
-        deleteTopic();
+        deleteCampaign();
 
         $('.likeItem').unbind('click');
         $('.likeItem').click(function(){
@@ -177,10 +175,207 @@
         });
     }
 
+    var initAjaxInvite = function(){
+
+        var friends_userTagging = new Bloodhound({
+            datumTokenizer:function(d){
+                return Bloodhound.tokenizers.whitespace(d.name);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            prefetch: {
+                url: mooConfig.url.base + '/users/friends.json',
+                cache: false,
+                filter: function(list) {
+
+                    return $.map(list.data, function(obj) {
+                        return obj;
+                    });
+                }
+            },
+
+            identify: function(obj) { return obj.id; },
+        });
+
+        friends_userTagging.initialize();
+
+
+        $('#friends').tagsinput({
+            freeInput: false,
+            itemValue: 'id',
+            itemText: 'name',
+            typeaheadjs: {
+                name: 'friends_userTagging',
+                displayKey: 'name',
+                highlight: true,
+                limit:10,
+                source: friends_userTagging.ttAdapter(),
+                templates:{
+                    notFound:[
+                        '<div class="empty-message">',
+                        mooPhrase.__('no_results'),
+                        '</div>'
+                    ].join(' '),
+                    suggestion: function(data){
+                        if($('#friends').val() != '')
+                        {
+                            var ids = $('#friends').val().split(',');
+                            if(ids.indexOf(data.id) != -1 )
+                            {
+                                return '<div class="empty-message" style="display:none">'+mooPhrase.__('no_results')+'</div>';
+                            }
+                        }
+                        return [
+                            '<div class="suggestion-item">',
+                            '<img alt src="'+data.avatar+'"/>',
+                            '<span class="text">'+data.name+'</span>',
+                            '</div>',
+                        ].join('')
+                    }
+                }
+            }
+        });
+        $('#sendButton').unbind('click');
+        $('#sendButton').click(function(){
+            $('#sendButton').spin('small');
+            mooButton.disableButton('sendButton');
+            $(".error-message").hide();
+
+            mooAjax.post({
+                url : mooConfig.url.base + '/fundraisings/ajax_sendInvite',
+                data: $("#sendInvite").serialize()
+            }, function(data){
+                mooButton.enableButton('sendButton');
+                $('#sendButton').spin(false);
+                var json = $.parseJSON(data);
+                if ( json.result == 1 )
+                {
+                    $('#simple-modal-body').html(json.msg);
+                }
+                else
+                {
+                    $(".error-message").show();
+                    $(".error-message").html(json.message);
+                }
+            });
+
+            return false;
+
+        });
+
+        $('#invite_type_topic').change(function(){
+            $('#invite_friend').hide();
+            $('#invite_email').hide();
+            if ($('#invite_type_topic').val() == '1')
+            {
+                $('#invite_friend').show();
+            }
+            else
+            {
+                $('#invite_email').show();
+            }
+        });
+    }
+
+    var initMailSetting = function(){
+        tinyMCE.remove();
+        tinyMCE.init({
+            selector: "textarea",
+            language : mooConfig.tinyMCE_language,
+            theme: "modern",
+            skin: 'light',
+            plugins: [
+                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code fullscreen",
+                "insertdatetime media nonbreaking save table contextmenu directionality",
+                "emoticons template paste textcolor"
+            ],
+            toolbar1: "styleselect | bold italic | bullist numlist outdent indent | forecolor backcolor emoticons | link unlink anchor image media | preview fullscreen code",
+            image_advtab: true,
+            height: 200,
+            relative_urls : false,
+            remove_script_host : true,
+            document_base_url : '<?php echo FULL_BASE_URL . $this->request->root?>'
+        });
+
+        $('#btn_save').on('click', function(){
+
+            $('#message').val(tinyMCE.activeEditor.getContent());
+            $(this).spin('small');
+
+            $.post(mooConfig.url.base + "/fundraisings/email_setting/",$('#formSignature').serialize(), function (data) {
+                data = $.parseJSON(data);
+                if(data.result == '1'){
+                    $('#msg_success').show();
+                }else{
+                    $('#msg_success').hide();
+                    $(".error-message").show();
+                    $(".error-message").html(data.message);
+                }
+                $('#btn_save').spin(false);
+            });
+        });
+    }
+
+    var initDonation = function(){
+        $('.pre-item').unbind('click');
+        $('.pre-item').click(function(){
+            var data = $(this).data();
+            $('#amount').val(data.value);
+        });
+
+        $('#view_term').click(function (e) {
+            e.preventDefault();
+            mooAlert.alert($('#term_content').html());
+        });
+
+        $('#btn_pay_offline').unbind('click');
+        $('#btn_pay_offline').click(function (e) {
+            $(this).spin('small');
+            $.post(mooConfig.url.base + "/fundraisings/pay_offline/",$('#formDonation').serialize(), function (data) {
+                data = $.parseJSON(data);
+                if(data.result == '1'){
+                    $.post(mooConfig.url.base + "/fundraisings/pay_offline/", function (data) {
+                        $('#pay_step_1 li').hide();
+                        $('#errorMessage').remove();
+                        $('#pay_step_1').append(data);
+                    });
+                }else{
+                    $('#msg_success').hide();
+                    $(".error-message").show();
+                    $(".error-message").html(data.message);
+                }
+                $('#btn_pay_offline').spin(false);
+            });
+        });
+
+        $('#pay_step_1').on('click', '#btn_send_payoffline',function (e) {
+            $(this).spin('small');
+            $.post(mooConfig.url.base + "/fundraisings/pay_offline/1",$('#formDonation').serialize(), function (data) {
+                data = $.parseJSON(data);
+                if(data.result == '1'){
+                    window.location = data.redirect;
+                }else{
+                    $('#msg_success').hide();
+                    $(".error-message").show();
+                    $(".error-message").html(data.message);
+                }
+                $('#btn_send_payoffline').spin(false);
+            });
+        });
+    }
+
+    var initOnDonorListing = function() {
+        mooBehavior.initMoreResults();
+    }
+
     return {
         initOnCreate: initOnCreate,
         initOnView : initOnView,
         initOnListing : initOnListing,
         toggleUploader : toggleUploader,
+        initAjaxInvite : initAjaxInvite,
+        initMailSetting : initMailSetting,
+        initDonation : initDonation,
+        initOnDonorListing : initOnDonorListing,
     }
 }));

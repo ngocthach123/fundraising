@@ -87,6 +87,11 @@ class Campaign extends FundraisingAppModel {
             'rule' => 'notBlank',
             'message' => 'Expire date is required'
         ),
+        'predefined' => array(
+            'valid' => array(
+                'rule' => 'checkPredefined'
+            )
+        ),
         'location' => array(
             'rule' => 'notBlank',
             'message' => 'Location is required'
@@ -222,15 +227,6 @@ class Campaign extends FundraisingAppModel {
         $activityModel->deleteAll(array('Activity.item_type' => 'Fundraising_Campaign', 'Activity.parent_id' => $parentActivity));
         
         $this->delete($campaign['Campaign']['id']);
-        
-        // delete attachments
-//        App::import('Model', 'Attachment');
-//        $attachment = new Attachment();
-//        $attachments = $attachment->getAttachments(PLUGIN_TOPIC_ID, $campaign['Campaign']['id']);
-
-//        foreach ($attachments as $a){
-//            $attachment->deleteAttachment($a);
-//        }
     }
 
     public function afterDelete() {
@@ -288,5 +284,15 @@ class Campaign extends FundraisingAppModel {
         }
         
         parent::updateCounter($id, $field, $conditions, $model);
+    }
+
+    public function checkPredefined($check) {
+        $value = trim($check['predefined']);
+        if(!preg_match('/^\d+(?:,\d+)*$/', $value))
+        {
+           return __('Predefined only allow numbers and commas');
+        }
+
+        return true;
     }
 }

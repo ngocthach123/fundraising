@@ -1,0 +1,1 @@
+<?php echo __('invited you to donate "%s"', $notification['Notification']['params']);?>

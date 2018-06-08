@@ -17,6 +17,7 @@
             <div class="box3">
                 <form id="createForm">
                 <?php
+                    $currency = Configure::read('Config.currency');
                     echo $this->Form->hidden('thumbnail', array('value' => $campaign['Campaign']['thumbnail']));
                     echo $this->Form->hidden('campaign_photo_ids');
                     if (!empty($campaign['Campaign']['id']))
@@ -58,6 +59,18 @@
                                     </li>
                                     <li>
                                         <div class="col-md-2">
+                                            <label><?php echo __( 'Upload photos to description')?></label>
+                                        </div>
+                                        <div class="col-md-10">
+                                            <div id="images-uploader">
+                                                <div id="attachments_upload"></div>
+                                                <a href="javascript:void(0)" class="button button-primary" id="triggerUpload"><?php echo __( 'Upload Queued Files')?></a>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </li>
+                                    <li>
+                                        <div class="col-md-2">
                                             <label><?php echo __( 'Target amount')?>
                                                 (<a data-html="true" href="javascript:void(0);" class="tip" original-title="<?php echo __('Enter 0 for unlimited goal');?>">?</a>)
                                             </label>
@@ -73,6 +86,14 @@
                                         </div>
                                         <div class="col-md-10">
                                             <?php echo $this->Form->text( 'expire', array( 'class' => 'datepicker', 'value' => $campaign['Campaign']['expire'] ) ); ?>
+                                            <?php
+                                            echo $this->Form->checkbox('unlimited', array(
+                                                'hiddenField' => false,
+                                                'class' => 'checkbox-campaign',
+                                                'checked' => (empty($campaign['Campaign']['expire']) && $campaign['Campaign']['id']) ? true : false
+                                                ));
+                                                echo __('Set this to unlimited time');
+                                            ?>
                                         </div>
                                         <div class="clear"></div>
                                     </li>
@@ -84,6 +105,7 @@
                                         </div>
                                         <div class="col-md-10">
                                             <?php echo $this->Form->text( 'predefined', array( 'value' => $campaign['Campaign']['predefined'] ) ); ?>
+                                            <?php echo $currency['Currency']['symbol'];?>
                                         </div>
                                         <div class="clear"></div>
                                     </li>
@@ -167,13 +189,6 @@
                                 </ul>
                                 <div class="col-md-2">&nbsp;</div>
                                 <div class="col-md-10">
-                                    <div id="images-uploader" style="display:none;margin:10px 0;">
-                                        <div id="attachments_upload"></div>
-                                        <a href="javascript:void(0)" class="button button-primary" id="triggerUpload"><?php echo __( 'Upload Queued Files')?></a>
-                                    </div>
-                                    <?php if(empty($isMobile)): ?>
-                                        <a id="toggleUploader" href="javascript:void(0)"><?php echo __( 'Toggle Attachments Uploader')?></a>
-                                    <?php endif; ?>
                                     <div style="margin:20px 0">
                                         <button type='button' class='btn btn-action' id="saveBtn"><?php echo __( 'Save')?></button>
 

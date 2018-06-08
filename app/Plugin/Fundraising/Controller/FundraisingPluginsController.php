@@ -21,7 +21,7 @@ class FundraisingPluginsController extends FundraisingAppController {
         $cond = array();
 
         if (!empty($this->request->data['keyword']))
-            $cond['MATCH(Campaign.title) AGAINST(? IN BOOLEAN MODE)'] = $this->request->data['keyword'];
+            $cond['Campaign.title LIKE'] = '%'.$this->request->data['keyword'].'%';
 
         $categories = $this->Category->getCategoriesList('Fundraising');
         $campaigns = $this->paginate('Campaign', $cond);
@@ -43,7 +43,7 @@ class FundraisingPluginsController extends FundraisingAppController {
                 
                 $this->Campaign->deleteCampaign($campaign);
                 
-                $cakeEvent = new CakeEvent('Plugin.Controller.Fundraising.afterDeleteFundraising', $this, array('item' => $campaign));
+                $cakeEvent = new CakeEvent('Plugin.Controller.Campaign.afterDeleteCampaign', $this, array('item' => $campaign));
                 $this->getEventManager()->dispatch($cakeEvent);
             }
 

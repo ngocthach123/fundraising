@@ -85,6 +85,9 @@ ul.campaign li{
 .campaign li .campaign_info{
 	margin-left:80px;
 }
+.detail-campaign-thumb{
+	width: 100%;
+}
 /*end campaign block*/
 .campaign_attached_file ul li a{
 	display: block;

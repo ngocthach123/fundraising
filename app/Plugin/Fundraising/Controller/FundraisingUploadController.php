@@ -78,7 +78,7 @@ class FundraisingUploadController extends FundraisingAppController {
                 $this->Photo->create();
                 $this->Photo->set(array(
                     'target_id' => 0,
-                    'type' => 'Topic',
+                    'type' => 'Campaign',
                     'user_id' => $uid,
                     'thumbnail' => $path . DS . $result['filename']
                 ));
