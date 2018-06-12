@@ -7,6 +7,8 @@
  * @author: mooSocial
  * @license: https://moosocial.com/license/
  */
+App::uses('Component', 'Fundraising.Controller/Component');
+
 class FundraisingsController extends FundraisingAppController {
 
     
@@ -270,6 +272,13 @@ class FundraisingsController extends FundraisingAppController {
     }
 
     public function view($id = null, $type = 'info') {
+//        //send mail
+//        $fundraisingMailComponent = MooCore::getInstance()->getComponent('Fundraising.FundraisingMail');
+//        $fundraisingMailComponent->send('asd','fundraising_receive_donor',
+//            array(
+//            )
+//        );
+
         $id = intval($id);
         
         $this->Campaign->recursive = 2;
@@ -295,6 +304,9 @@ class FundraisingsController extends FundraisingAppController {
 
         switch ($type){
             case 'mail':
+                $this->loadModel('Fundraising.FundraisingMail');
+                $mail = $this->FundraisingMail->getMail($id);
+                $this->set('mail', $mail);
                 $this->set('campaign', $campaign);
                 break;
             case 'donor':
@@ -529,8 +541,36 @@ class FundraisingsController extends FundraisingAppController {
         echo json_encode($response);
     }
 
-    public function ajax_email_setting(){
+    public function email_setting(){
+        $this->autoRender = false;
+        if($this->request->is('post')){
+            $this->loadModel('Fundraising.FundraisingMail');
+            $data = $this->request->data;
 
+            $this->FundraisingMail->set($data);
+            $this->_validateData($this->FundraisingMail);
+
+            $mail = $this->FundraisingMail->find('first', array(
+                'conditions' => array('target_id' => $data['target_id'])
+            ));
+
+            if(!empty($mail)){
+                $data['id'] = $mail['FundraisingMail']['id'];
+                $this->FundraisingMail->set($data);
+            }
+
+            if($this->FundraisingMail->save()){
+                $response = array(
+                    'result' => 1,
+                );
+                echo json_encode($response);exit;
+            }
+        }
+        $response = array(
+            'result' => 0,
+            'message' => __('An error has occurred, please try again'),
+        );
+        echo json_encode($response);exit;
     }
 
     public function donate($id = null){
@@ -538,15 +578,86 @@ class FundraisingsController extends FundraisingAppController {
         $campaign= $this->Campaign->findById($id);
         $this->_checkExistence($campaign);
 
+        $http = (!empty($ssl_mode)) ? 'https' :  'http';
+        if (Configure::read("Fundraising.fundraising_test_mode")){
+            $paypal_url = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+        }else{
+            $paypal_url = 'https://www.paypal.com/cgi-bin/webscr';
+        }
+
+        $cancel_return = $http."://".$_SERVER['SERVER_NAME'].$campaign['Campaign']['moo_href'];
+        $success_return = $http."://".$_SERVER['SERVER_NAME'].$this->request->base.'/fundraisings/pay_success/'.$campaign['Campaign']['id'];
+
+        $this->set(compact('paypal_url', 'cancel_return', 'success_return'));
         $this->set('campaign',$campaign);
+    }
+
+    public function pay_paypal(){
+        if(!empty($this->request->data)){
+            $this->loadModel('Fundraising.CampaignDonor');
+
+            $data = $this->request->data;
+            $uid = $this->Auth->user('id');
+            $this->CampaignDonor->set($data);
+            $this->_validateData($this->CampaignDonor);
+            $cuser = $this->_getUser();
+
+            //validate
+            if(empty($data['accept_term'])){
+                $response = array(
+                    'result' => 0,
+                    'message' => __('You must accept the terms and conditions'),
+                );
+                echo json_encode($response);exit;
+            }
+
+            if(empty($data['anonymous'])){
+                $data['user_id'] = $uid;
+            }else{
+                $data['user_id'] = 0;
+            }
+
+            if(empty($data['hide_feed'])){
+                $hide_feed = 0;
+            }else{
+                $hide_feed = 1;
+            }
+
+            $data['email'] = $cuser['email'];
+            $data['name'] = $cuser['name'];
+            $data['method'] = 'paypal';
+            $data['status'] = 2;
+
+            $this->CampaignDonor->set($data);
+            if($this->CampaignDonor->save()){
+                $http = (!empty($ssl_mode)) ? 'https' :  'http';
+                $response = array(
+                    'result' => 1,
+                    'amount' => $data['amount'],
+                    'notify_url' => $http."://".$_SERVER['SERVER_NAME'].$this->request->base.'/fundraisings/ipn?id='.$this->CampaignDonor->id.'&hide_feed='.$hide_feed,
+                    'cancel_url' => $http."://".$_SERVER['SERVER_NAME'].$this->request->base.'/fundraisings/pay_cancel/'.$this->CampaignDonor->id,
+                );
+                echo json_encode($response);exit;
+
+            }else{
+                $response = array(
+                    'result' => 0,
+                    'message' => __('An error has occurred, please try again'),
+                );
+                echo json_encode($response);exit;
+            }
+        }
     }
 
     public function pay_offline($send = 0){
         if(!empty($this->request->data)){
-            $data = $this->request->data;
             $this->loadModel('Fundraising.CampaignDonor');
+
+            $data = $this->request->data;
+            $uid = $this->Auth->user('id');
             $this->CampaignDonor->set($data);
             $this->_validateData($this->CampaignDonor);
+
 
             //validate
             if(empty($data['accept_term'])){
@@ -575,12 +686,32 @@ class FundraisingsController extends FundraisingAppController {
                     }
                 }
 
-                $data['user_id'] = empty($data['anonymous']) ? $this->Auth->user('id') : 0;
+                $data['user_id'] = empty($data['anonymous']) ? $uid : 0;
                 $data['method'] = 'offline';
                 $data['status'] = 0;
                 $this->CampaignDonor->set($data);
                 if($this->CampaignDonor->save()){
-                    $this->Campaign->updateCounter($data['target_id'], 'donor_count', array('CampaignDonor.target_id' => $data['target_id']), 'CampaignDonor');
+                    $this->Campaign->updateCounter($data['target_id'], 'donor_count', array('CampaignDonor.target_id' => $data['target_id'], 'CampaignDonor.status <>' => 2), 'CampaignDonor');
+                    //create feed
+                    if(empty($data['hide_feed'])) {
+                        $type = APP_USER;
+                        $target_id = 0;
+                        $privacy = PRIVACY_EVERYONE;
+
+                        $this->loadModel('Activity');
+                        $this->Activity->save(array('type' => $type,
+                            'target_id' => $target_id,
+                            'action' => 'campaign_donate',
+                            'user_id' => $uid,
+                            'item_type' => 'Fundraising_Campaign',
+                            'privacy' => $privacy,
+                            'item_id' => $data['target_id'],
+                            'query' => 1,
+                            'params' => 'item',
+                            'plugin' => 'Fundraising'
+                        ));
+                    }
+
                     $this->Session->setFlash(__('Successfully sent'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in'));
 
                     $response = array(
@@ -604,5 +735,233 @@ class FundraisingsController extends FundraisingAppController {
             );
             echo json_encode($response);exit;
         }
+    }
+
+    public function delete_donor($id = null){
+        if($this->request->is('post')){
+            $this->loadModel('Fundraising.CampaignDonor');
+            $this->CampaignDonor->bindModel(array(
+                'belongsTo' => array(
+                    'Campaign' => array(
+                        'classname' => 'Fundraising.Campaign',
+                        'foreignKey' => 'target_id'
+                    )
+                )
+            ));
+
+            $id = $this->request->data['item_id'];
+            $donor = $this->CampaignDonor->findById($id);
+
+            $this->_checkExistence($donor);
+            $this->_checkPermission(array('admins' => array($donor['Campaign']['user_id'])));
+            if(empty($this->request->data['message'])){
+                $response = array(
+                    'result' => 0,
+                    'message' => __('Message is required'),
+                );
+                echo json_encode($response);exit;
+            }
+
+            $this->CampaignDonor->delete($id);
+            $this->Campaign->updateCounter($donor['CampaignDonor']['target_id'], 'donor_count', array('CampaignDonor.target_id' => $donor['CampaignDonor']['target_id'], 'CampaignDonor.status <>' => 2), 'CampaignDonor');
+
+            //send mail
+            if(!empty($donor['CampaignDonor']['email'])) {
+                $ssl_mode = Configure::read('core.ssl_mode');
+                $http = (!empty($ssl_mode)) ? 'https' : 'http';
+                $this->MooMail->send(trim($donor['CampaignDonor']['email']), 'fundraising_delete_donor',
+                    array(
+                        'receive_name' => $donor['CampaignDonor']['name'],
+                        'message' => $this->request->data['message'],
+                        'link' => $http . '://' . $_SERVER['SERVER_NAME'] . $donor['Campaign']['moo_href'] . '/',
+                    )
+                );
+            }
+            $this->Session->setFlash( __('Donor has been deleted'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
+
+            $response = array(
+                'result' => 1,
+            );
+            echo json_encode($response);exit;
+        }
+        $this->set('item_id', $id);
+    }
+
+    public function receive_donor($id = null){
+        if($this->request->is('post')){
+            $this->loadModel('Fundraising.CampaignDonor');
+            $this->CampaignDonor->bindModel(array(
+                'belongsTo' => array(
+                    'Campaign' => array(
+                        'classname' => 'Fundraising.Campaign',
+                        'foreignKey' => 'target_id'
+                    )
+                )
+            ));
+
+            $id = $this->request->data['item_id'];
+            $donor = $this->CampaignDonor->findById($id);
+
+            $this->_checkExistence($donor);
+            $this->_checkPermission(array('admins' => array($donor['Campaign']['user_id'])));
+            if(empty($this->request->data['message'])){
+                $response = array(
+                    'result' => 0,
+                    'message' => __('Message is required'),
+                );
+                echo json_encode($response);exit;
+            }
+
+            $this->CampaignDonor->updateStatus($id, 1);
+            $this->Campaign->updateTotalRaised($donor['CampaignDonor']['target_id']);
+
+            //send mail
+            $ssl_mode = Configure::read('core.ssl_mode');
+            $http = (!empty($ssl_mode)) ? 'https' :  'http';
+            $this->MooMail->send(trim($donor['CampaignDonor']['email']),'fundraising_receive_donor',
+                array(
+                    'receive_name' => $donor['CampaignDonor']['name'],
+                    'message' => $this->request->data['message'],
+                    'link' => $http.'://'.$_SERVER['SERVER_NAME'].$donor['Campaign']['moo_href'].'/',
+                )
+            );
+            $this->Session->setFlash( __('Status changed'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
+
+            $response = array(
+                'result' => 1,
+            );
+            echo json_encode($response);exit;
+        }
+        $this->set('item_id', $id);
+    }
+
+    public function ipn(){
+        $this->autoRender = false;
+        // STEP 1: read POST data
+        // Reading POSTed data directly from $_POST causes serialization issues with array data in the POST.
+        // Instead, read raw POST data from the input stream.
+        $raw_post_data = file_get_contents('php://input');
+        $raw_post_array = explode('&', $raw_post_data);
+        $myPost = array();
+        foreach ($raw_post_array as $keyval) {
+            $keyval = explode ('=', $keyval);
+            if (count($keyval) == 2)
+                $myPost[$keyval[0]] = urldecode($keyval[1]);
+        }
+        // read the IPN message sent from PayPal and prepend 'cmd=_notify-validate'
+        $req = 'cmd=_notify-validate';
+        if (function_exists('get_magic_quotes_gpc')) {
+            $get_magic_quotes_exists = true;
+        }
+        foreach ($myPost as $key => $value) {
+            if ($get_magic_quotes_exists == true && get_magic_quotes_gpc() == 1) {
+                $value = urlencode(stripslashes($value));
+            } else {
+                $value = urlencode($value);
+            }
+            $req .= "&$key=$value";
+        }
+
+        if (Configure::read("Fundraising.fundraising_test_mode")){
+            $ipn_url = 'https://ipnpb.sandbox.paypal.com/cgi-bin/webscr';
+        }else{
+            $ipn_url = 'https://ipnpb.paypal.com/cgi-bin/webscr';
+        }
+
+        // Step 2: POST IPN data back to PayPal to validate
+        $ch = curl_init($ipn_url);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+
+        if ( !($res = curl_exec($ch)) ) {
+            $this->log('Res invalid');
+            curl_close($ch);
+            exit;
+        }
+        curl_close($ch);
+
+        // inspect IPN validation result and act accordingly
+        if (strcmp ($res, "VERIFIED") == 0) {
+//            $this->log('IPN success');
+//            $this->log($_REQUEST);
+            // The IPN is verified, process it
+            $id = @$_REQUEST['id'];
+            $hide_feed = @$_REQUEST['hide_feed'];
+            if($id) {
+                $this->loadModel('Fundraising.CampaignDonor');
+                $donor = $this->CampaignDonor->findById($id);
+                if(!empty($donor)) {
+                    $this->CampaignDonor->updateStatus($id, 1);
+
+                    $this->Campaign->updateCounter($donor['CampaignDonor']['target_id'], 'donor_count', array('CampaignDonor.target_id' => $donor['CampaignDonor']['target_id'], 'CampaignDonor.status <>' => 2), 'CampaignDonor');
+                    $this->Campaign->updateTotalRaised($donor['CampaignDonor']['target_id']);
+
+                    //create feed
+                    if (!$hide_feed) {
+                        $type = APP_USER;
+                        $target_id = 0;
+                        $privacy = PRIVACY_EVERYONE;
+
+                        $this->loadModel('Activity');
+                        $this->Activity->save(array('type' => $type,
+                            'target_id' => $target_id,
+                            'action' => 'campaign_donate',
+                            'user_id' => $this->Auth->user('id'),
+                            'item_type' => 'Fundraising_Campaign',
+                            'privacy' => $privacy,
+                            'item_id' => $donor['CampaignDonor']['target_id'],
+                            'query' => 1,
+                            'params' => 'item',
+                            'plugin' => 'Fundraising'
+                        ));
+                    }
+                }
+            }
+        } else if (strcmp ($res, "INVALID") == 0) {
+            // IPN invalid, log for manual investigation
+//            $this->log('IPN invalid, log for manual investigation');
+        }
+    }
+
+    public function log($msg, $type = LOG_ERR, $scope = null)
+    {
+        if (!is_string($msg))
+        {
+            $msg = print_r($msg,true);
+        }
+
+        parent::log($msg,'fundraising');
+    }
+
+    public function pay_success($id){
+        $this->Session->setFlash( __('Pay successfully'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
+        $this->redirect('/fundraisings/view/'.$id);
+    }
+
+    public function pay_cancel($id = null){
+        $this->loadModel('Fundraising.CampaignDonor');
+        $this->CampaignDonor->bindModel(array(
+            'belongsTo' => array(
+                'Campaign' => array(
+                    'classname' => 'Fundraising.Campaign',
+                    'foreignKey' => 'target_id'
+                )
+            )
+        ));
+
+        $donor = $this->CampaignDonor->findById($id);
+
+        $this->_checkExistence($donor);
+        $this->_checkPermission(array('admins' => array($donor['Campaign']['user_id'])));
+
+        $this->CampaignDonor->delete($id);
+
+        $this->redirect('/fundraisings/view/'.$donor['Campaign']['id']);
     }
 }

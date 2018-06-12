@@ -30,6 +30,12 @@ class FundraisingPlugin implements MooPlugin{
             $settingModel->id = $setting['Setting']['id'];
             $settingModel->save(array('is_boot'=>1));
         }
+        $setting = $settingModel->findByName('fundraising_consider_force');
+        if ($setting)
+        {
+            $settingModel->id = $setting['Setting']['id'];
+            $settingModel->save(array('is_boot'=>1));
+        }
 
         //Add Menu
         $languageModel = MooCore::getInstance()->getModel('Language');
@@ -218,6 +224,56 @@ EOF;
             $data_translate['content'] = $content;
             $mailModel->save($data_translate);
         }
+
+        $mailModel->clear();
+        $data['Mailtemplate'] = array(
+            'type' => 'fundraising_receive_donor',
+            'plugin' => 'Fundraising',
+            'vars' => '[message],[link],[receive_name]'
+        );
+        $mailModel->save($data);
+
+        foreach ($langs as $lang)
+        {
+            $language = $lang['Language']['key'];
+            $mailModel->locale = $language;
+            $data_translate['subject'] = 'Thanks for you donation';
+            $content = <<<EOF
+		    <p>[header]</p>
+		    <p>Hello [receive_name]</p>
+			<p>Thank for your donation, we have got the money and updated your donation status in our donor list.</p>
+            <p>Message from campaign owner: [message]</p>
+            <p>Please click on below link to view details.<br/>[link]</p>
+			<p>[footer]</p>
+EOF;
+            $data_translate['content'] = $content;
+            $mailModel->save($data_translate);
+        }
+
+        $mailModel->clear();
+        $data['Mailtemplate'] = array(
+            'type' => 'fundraising_delete_donor',
+            'plugin' => 'Fundraising',
+            'vars' => '[message],[link],[receive_name]'
+        );
+        $mailModel->save($data);
+
+        foreach ($langs as $lang)
+        {
+            $language = $lang['Language']['key'];
+            $mailModel->locale = $language;
+            $data_translate['subject'] = 'Your donation record has been deleted because money is not received';
+            $content = <<<EOF
+		    <p>[header]</p>
+		    <p>Hello [receive_name]</p>
+			<p>I would like to inform that your donation record has been deleted from donors list in our campaign because money has not re</p>
+            <p>Message from campaign owner: [message]</p>
+            <p>Please click on below link to view details.<br/>[link]</p>
+			<p>[footer]</p>
+EOF;
+            $data_translate['content'] = $content;
+            $mailModel->save($data_translate);
+        }
     }
     public function uninstall(){
         //Permission
@@ -234,6 +290,18 @@ EOF;
         //Mail
         $mailModel = MooCore::getInstance()->getModel('Mail.Mailtemplate');
         $mail = $mailModel->findByType('fundraising_invite_none_member');
+        if ($mail)
+        {
+            $mailModel->delete($mail['Mailtemplate']['id']);
+        }
+
+        $mail = $mailModel->findByType('fundraising_receive_donor');
+        if ($mail)
+        {
+            $mailModel->delete($mail['Mailtemplate']['id']);
+        }
+
+        $mail = $mailModel->findByType('fundraising_delete_donor');
         if ($mail)
         {
             $mailModel->delete($mail['Mailtemplate']['id']);

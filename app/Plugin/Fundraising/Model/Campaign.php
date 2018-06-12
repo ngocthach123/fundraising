@@ -286,6 +286,14 @@ class Campaign extends FundraisingAppModel {
         parent::updateCounter($id, $field, $conditions, $model);
     }
 
+    public function updateTotalRaised($id) {
+        $modelObj = ClassRegistry::init('CampaignDonor');
+        $modelObj->virtualFields['total'] = 'SUM(CampaignDonor.amount)';
+        $totalAmount = $modelObj->find('list', array('conditions' => array('CampaignDonor.target_id' => $id, 'CampaignDonor.status = 1'),'fields' => array('total')));
+        $this->id = $id;
+        $this->saveField('raised_amount', $totalAmount[key($totalAmount)]);
+    }
+
     public function checkPredefined($check) {
         $value = trim($check['predefined']);
         if(!preg_match('/^\d+(?:,\d+)*$/', $value))

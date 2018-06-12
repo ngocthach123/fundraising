@@ -99,6 +99,12 @@ ul.campaign li{
 	margin-left:0;
 	margin-bottom:5px;
 }
+#formDeleteDonor, #formReceiveDonor{
+	text-align: left;
+}
+#paypal_form{
+	display: inline-block;
+}
 @media (max-width: 991px){
 	.campaign-content-list .list_option{
 		right: 10px;

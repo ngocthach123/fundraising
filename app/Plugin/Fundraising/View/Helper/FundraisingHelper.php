@@ -52,10 +52,6 @@ class FundraisingHelper extends AppHelper
             return true;
         }
 
-        if (isset($fundraising['Fundraising']['locked']) && $fundraising['Fundraising']['locked']) {
-            return false;
-        }
-
         return true;
     }
 

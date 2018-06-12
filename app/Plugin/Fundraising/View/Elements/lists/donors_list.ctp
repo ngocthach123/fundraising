@@ -15,14 +15,46 @@
 			}
 	?>
 		<li class="full_content p_m_10">
-			<div class="donor-name"><a href="<?php echo $donor['User']['moo_href'];?>"><?php echo $donor['CampaignDonor']['name'];?></a></div>
+			<div class="donor-name">
+				<?php if($donor['CampaignDonor']['user_id']):?>
+					<a href="<?php echo $donor['User']['moo_href'];?>"><?php echo $donor['CampaignDonor']['name'];?></a>
+				<?php else:?>
+					<?php echo __('Anonymous');?>
+				<?php endif;?>
+			</div>
 			<div class="donor-info"><?php echo __('Donated %s via %s', $currency['Currency']['symbol'].$donor['CampaignDonor']['amount'], $method);?> <?php echo $this->Moo->getTime($donor['CampaignDonor']['created'], Configure::read('core.date_format'), $utz)?></div>
-			<?php if($donor['CampaignDonor']['status']):?>
-				<div class="donor-status"><?php echo __('Status');?>: <span class="receive"><?php echo __('received') ?></span></div>
-			<?php else:?>
-				<div class="donor-status"><?php echo __('Status');?>: <span class="pending"><?php echo __('pending') ?></span></div>
+			<div class="donor-status">
+				<?php if($donor['CampaignDonor']['status']):?>
+					<?php echo __('Status');?>: <span class="status-receive"><?php echo __('received') ?></span>
+				<?php else:?>
+					<?php echo __('Status');?>: <span class="status-pending"><?php echo __('pending') ?></span>
+					<?php if($uid == $campaign['Campaign']['user_id']): ?>
+						<?php
+						 $this->MooPopup->tag(array(
+							'href'=>$this->Html->url(array("controller" => "fundraisings",
+							"action" => "receive_donor",
+							"plugin" => 'fundraising',
+							$donor['CampaignDonor']['id'],
+							)),
+							'title' => __('Receive'), 'innerHtml'=>  __('Receive'), 'class'=>'btn-donor-action', 'target' => ''
+						));
+						?> |
+						<?php
+						 $this->MooPopup->tag(array(
+							'href'=>$this->Html->url(array("controller" => "fundraisings",
+							"action" => "delete_donor",
+							"plugin" => 'fundraising',
+							$donor['CampaignDonor']['id'],
+							)),
+							'title' => __('Delete'), 'innerHtml'=>  __('Delete'), 'class'=>'btn-donor-action', 'target' => ''
+						));
+						?>
+					<?php endif;?>
+				<?php endif;?>
+			</div>
+			<?php if(!empty($donor['CampaignDonor']['message'])):?>
+				<div class="donor-message"><span><?php echo __('Message from donor:')?></span> <?php echo $this->Text->truncate($donor['CampaignDonor']['message'], 150, array('exact' => false));?></div>
 			<?php endif;?>
-			<div class="donor-message"><span><?php echo __('Message from donor:')?></span> <?php echo $this->Text->truncate($donor['CampaignDonor']['message'], 150, array('exact' => false));?></div>
 		</li>
 	<?php
 		endforeach;

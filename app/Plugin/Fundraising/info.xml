@@ -53,6 +53,19 @@
             </values>
         </setting>
         <setting>
+            <label>Paypal test mode</label>
+            <name>fundraising_test_mode</name>
+            <description>Paypal test mode</description>
+            <type>checkbox</type>
+            <values>
+                <value>
+                    <name></name>
+                    <value>1</value>
+                    <select>0</select>
+                </value>
+            </values>
+        </setting>
+        <setting>
             <label>By pass force login</label>
             <name>fundraising_consider_force</name>
             <description>By pass force login</description>

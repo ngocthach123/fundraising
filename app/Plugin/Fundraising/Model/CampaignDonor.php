@@ -39,12 +39,18 @@ class CampaignDonor extends FundraisingAppModel {
     public function getDonors($id, $page = 1, $limit = RESULTS_LIMIT){
         $results = $this->find('all', array(
             'conditions' => array(
-                'CampaignDonor.target_id' => $id
+                'CampaignDonor.target_id' => $id,
+                'CampaignDonor.status <>' => 2,
             ),
             'limit' => $limit,
             'page' => $page
         ));
 
         return $results;
+    }
+
+    public function updateStatus($id, $status = 0){
+        $this->id = $id;
+        $this->saveField('status', $status);
     }
 }

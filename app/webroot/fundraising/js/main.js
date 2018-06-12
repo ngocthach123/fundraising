@@ -277,35 +277,16 @@
     }
 
     var initMailSetting = function(){
-        tinyMCE.remove();
-        tinyMCE.init({
-            selector: "textarea",
-            language : mooConfig.tinyMCE_language,
-            theme: "modern",
-            skin: 'light',
-            plugins: [
-                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                "searchreplace wordcount visualblocks visualchars code fullscreen",
-                "insertdatetime media nonbreaking save table contextmenu directionality",
-                "emoticons template paste textcolor"
-            ],
-            toolbar1: "styleselect | bold italic | bullist numlist outdent indent | forecolor backcolor emoticons | link unlink anchor image media | preview fullscreen code",
-            image_advtab: true,
-            height: 200,
-            relative_urls : false,
-            remove_script_host : true,
-            document_base_url : '<?php echo FULL_BASE_URL . $this->request->root?>'
-        });
-
         $('#btn_save').on('click', function(){
 
-            $('#message').val(tinyMCE.activeEditor.getContent());
+            $('#content').val(tinyMCE.activeEditor.getContent());
             $(this).spin('small');
 
-            $.post(mooConfig.url.base + "/fundraisings/email_setting/",$('#formSignature').serialize(), function (data) {
+            $.post(mooConfig.url.base + "/fundraisings/email_setting/",$('#formMailSetting').serialize(), function (data) {
                 data = $.parseJSON(data);
                 if(data.result == '1'){
                     $('#msg_success').show();
+                    $(".error-message").hide();
                 }else{
                     $('#msg_success').hide();
                     $(".error-message").show();
@@ -337,7 +318,7 @@
                     $.post(mooConfig.url.base + "/fundraisings/pay_offline/", function (data) {
                         $('#pay_step_1 li').hide();
                         $('#errorMessage').remove();
-                        $('#pay_step_1').append(data);
+                        $('#formDonation').append(data);
                     });
                 }else{
                     $('#msg_success').hide();
@@ -362,10 +343,64 @@
                 $('#btn_send_payoffline').spin(false);
             });
         });
+
+        $('#btn_pay_paypal').unbind('click');
+        $('#btn_pay_paypal').click(function (e) {
+            $(this).spin('small');
+            $.post(mooConfig.url.base + "/fundraisings/pay_paypal/",$('#formDonation').serialize(), function (data) {
+                data = $.parseJSON(data);
+                if(data.result == '1'){
+                    $('#paypal_amount').val(data.amount);
+                    $('#notify_url').val(data.notify_url);
+                    $('#cancel_return').val(data.cancel_url);
+                    $('#errorMessage').hide();
+                    $('#paypal_form').submit();
+                }else{
+                    $('#msg_success').hide();
+                    $(".error-message").show();
+                    $(".error-message").html(data.message);
+                    $('#btn_pay_paypal').spin(false);
+                }
+            });
+        });
     }
 
     var initOnDonorListing = function() {
         mooBehavior.initMoreResults();
+    }
+
+    var initDeleteDonor = function() {
+        $('#btn_delete_donor').unbind('click');
+        $('#btn_delete_donor').click(function (e) {
+            $(this).spin('small');
+            $.post(mooConfig.url.base + "/fundraisings/delete_donor/",$('#formDeleteDonor').serialize(), function (data) {
+                data = $.parseJSON(data);
+                if(data.result == '1'){
+                    window.location.reload();
+                }else{
+                    $(".error-message").show();
+                    $(".error-message").html(data.message);
+                }
+                $('#btn_delete_donor').spin(false);
+            });
+        });
+    }
+
+    var initReceiveDonor = function() {
+        $('#btn_receive_donor').unbind('click');
+        $('#btn_receive_donor').click(function (e) {
+            $(this).spin('small');
+            $.post(mooConfig.url.base + "/fundraisings/receive_donor/",$('#formReceiveDonor').serialize(), function (data) {
+                data = $.parseJSON(data);
+                if(data.result == '1'){
+                    window.location.reload();
+                }else{
+                    $(".error-message").show();
+                    $(".error-message").html(data.message);
+                }
+                $('#btn_receive_donor').spin(false);
+            });
+        });
     }
 
     return {
@@ -377,5 +412,7 @@
         initMailSetting : initMailSetting,
         initDonation : initDonation,
         initOnDonorListing : initOnDonorListing,
+        initDeleteDonor : initDeleteDonor,
+        initReceiveDonor : initReceiveDonor
     }
 }));

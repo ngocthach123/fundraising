@@ -1,4 +1,6 @@
 DROP TABLE IF EXISTS `{PREFIX}campaigns`;
+DROP TABLE IF EXISTS `{PREFIX}campaign_donors`;
+DROP TABLE IF EXISTS `{PREFIX}fundraising_mails`;
 
 DELETE FROM `{PREFIX}pages` WHERE `uri` = 'fundraisings.index';
 DELETE FROM `{PREFIX}pages` WHERE `uri` = 'fundraisings.view';

@@ -9,6 +9,7 @@
             <div class="content_center">
                 <div class="box3">
                     <form action="<?php echo  $this->request->base; ?>/fundraisings/email_setting" id="formMailSetting" method="post">
+                        <?php echo $this->Form->hidden('target_id', array('value' => $campaign['Campaign']['id'])); ?>
                         <div class="full_content p_m_10">
                             <div class="form_content">
                                 <ul>
@@ -17,7 +18,7 @@
                                             <?php echo __('Subject');?>
                                         </div>
                                         <div class="col-md-10">
-                                            <?php echo $this->Form->text('subject', array('value' => '')); ?>
+                                            <?php echo $this->Form->text('subject', array('value' => !empty($mail) ? $mail['FundraisingMail']['subject'] : '')); ?>
                                         </div>
                                         <div class="clear"></div>
                                     </li>
@@ -26,7 +27,7 @@
                                             <?php echo __('Message');?>
                                         </div>
                                         <div class="col-md-10">
-                                            <?php echo $this->Form->tinyMCE('message', array('value' => '')); ?>
+                                            <?php echo $this->Form->tinyMCE('content', array('value' => !empty($mail) ? $mail['FundraisingMail']['content'] : '')); ?>
                                         </div>
                                         <div class="clear"></div>
                                     </li>
