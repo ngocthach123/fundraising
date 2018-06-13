@@ -33,10 +33,7 @@
             endif;
             ?>
         </div>
-	
 
-	
-	<ul class="campaign-content-list" id="list-content">
 		<?php 
 		if ( !empty( $this->request->named['category_id'] )  || !empty($cat_id)){
                     if (empty($cat_id)){
@@ -48,6 +45,5 @@
                     echo $this->element( 'lists/campaigns_list', array( 'more_url' => '/fundraisings/browse/all/page:2' ) );
                 }
 		?>
-	</ul>	
     </div>
 </div>

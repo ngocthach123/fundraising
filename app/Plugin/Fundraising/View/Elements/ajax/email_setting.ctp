@@ -28,6 +28,7 @@
                                         </div>
                                         <div class="col-md-10">
                                             <?php echo $this->Form->tinyMCE('content', array('value' => !empty($mail) ? $mail['FundraisingMail']['content'] : '')); ?>
+                                            <p><?php echo __('Please do not change [donor_name] and [donation_url] because it will auto replace by system');?></p>
                                         </div>
                                         <div class="clear"></div>
                                     </li>

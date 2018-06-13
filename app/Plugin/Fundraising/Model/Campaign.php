@@ -116,19 +116,12 @@ class Campaign extends FundraisingAppModel {
         )
     );
 
-    /*
-     * Get topics based on type
-     * @param string $type - possible value: my, home, category, user, search, group
-     * @param mixed $param - could be catid (category), uid (home, my, user) or a query string (search)
-     * @param int $page - page number
-     * @return array $topics
-     */
-
-    public function getCampaigns($type = null, $param = null, $page = 1, $limit = RESULTS_LIMIT) {
+    public function getCampaigns($type = null, $param = null, $page = 1, $limit = 0) {
         $cond = array();
         $order = null;
-        $limit = Configure::read('Topic.topic_item_per_pages');
-
+        if(!$limit) {
+            $limit = Configure::read('Fundraising.fundraising_item_per_pages');
+        }
         switch ($type) {
             case 'category':
                 if (!empty($param)) {
@@ -172,7 +165,7 @@ class Campaign extends FundraisingAppModel {
                 $order = 'Campaign.id desc';
         }
 
-        //only get topics of active user
+        //only get campaigns of active user
         $cond['User.active'] = 1;
         $cond = $this->addBlockCondition($cond);
         $campaigns = $this->find('all', array('conditions' => $cond, 'order' => $order, 'limit' => $limit, 'page' => $page));
@@ -188,30 +181,6 @@ class Campaign extends FundraisingAppModel {
         }
         
         return $campaigns;
-    }
-
-    public function getPopularTopics($limit = 5, $days = null) {
-        $this->unbindModel(array('belongsTo' => array('Group')));
-
-        $cond = array('Topic.group_id' => 0);
-
-        if (!empty($days))
-            $cond['DATE_SUB(CURDATE(),INTERVAL ? DAY) <= Topic.created'] = intval($days);
-
-        //only get topics of active user
-        $cond['User.active'] = 1;
-        $cond = $this->addBlockCondition($cond);
-        $topics = Cache::read('topic.popular', 'topic');
-        if (!$topics){
-            $topics = $this->find('all', array('conditions' => $cond,
-                'order' => 'Topic.like_count desc',
-                'limit' => intval($limit)
-            ));
-            Cache::write('topic.popular', 'topic');
-        }
-        
-
-        return $topics;
     }
 
     public function deleteCampaign($campaign) {
@@ -230,7 +199,7 @@ class Campaign extends FundraisingAppModel {
     }
 
     public function afterDelete() {
-        // delete attached images in topic
+        // delete attached images in campaign
         $photoModel = MooCore::getInstance()->getModel('Photo.Photo');
         $photos = $photoModel->find('all', array('conditions' => array('Photo.type' => 'Campaign',
             'Photo.target_id' => $this->id)));
@@ -251,17 +220,6 @@ class Campaign extends FundraisingAppModel {
     public function getThumb($row){
 
         return 'thumbnail';
-    }
-
-    public function getTopicSuggestion($q, $limit = RESULTS_LIMIT,$page = 1){
-        $this->unbindModel(	array('belongsTo' => array('Group') ) );
-        $cond = array('Topic.title LIKE "' . $q . '%"' );
-
-        //only get topics of active user
-        $cond['User.active'] = 1;
-        $cond = $this->addBlockCondition($cond);
-        $topics = $this->find( 'all', array( 'conditions' => $cond, 'limit' => $limit, 'page' => $page) );
-        return $topics;
     }
 
     public function getTopicHashtags($qid, $limit = RESULTS_LIMIT,$page = 1){
@@ -292,6 +250,11 @@ class Campaign extends FundraisingAppModel {
         $totalAmount = $modelObj->find('list', array('conditions' => array('CampaignDonor.target_id' => $id, 'CampaignDonor.status = 1'),'fields' => array('total')));
         $this->id = $id;
         $this->saveField('raised_amount', $totalAmount[key($totalAmount)]);
+    }
+
+    public function getTotalCampaigns($conditions = array())
+    {
+        return $this->find('count',array('conditions'=>$conditions));
     }
 
     public function checkPredefined($check) {

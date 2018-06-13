@@ -27,4 +27,18 @@ class FundraisingMail extends FundraisingAppModel {
             'conditions' => array('FundraisingMail.target_id' => $id)
         ));
     }
+
+    public function initMail(){
+        $mail['FundraisingMail'] = array();
+        $mail['FundraisingMail']['subject'] = 'Thank for your contribution';
+        $mail['FundraisingMail']['content'] = <<<EOF
+		    <p>Hello [donor_name],</p>
+			<p>Thank you for contributing! We're so appreciated and will transfer the money to help people on behalf of you.
+            <br/>Your donation has been updated at our campaign. You can visit our fundraising at the following link<br/>
+            <a href="[donation_url]">[donation_url]</a>
+			</p>
+            <p>Thank you again and we look forward to your continued support.</p>
+EOF;
+        return $mail;
+    }
 }

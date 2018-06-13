@@ -1,6 +1,7 @@
 
 
 <?php if(Configure::read('Fundraising.fundraising_enabled') == 1): ?>
+    <ul class="campaign-content-list" id="list-content">
     <?php
      $currency = Configure::read('Config.currency');
     $fundraisingHelper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
@@ -10,15 +11,9 @@
         foreach ($campaigns as $campaign):
     ?>
         <li class="full_content p_m_10" <?php if( $i == count($campaigns) ) echo 'style="border-bottom:0"'; ?>>
-            <?php if(!empty( $ajax_view )): ?>
-                <a class="ajaxLoadCampaignDetail" href="javascript:void(0)" data-url="<?php echo  $this->request->base ?>/fundraisings/ajax_view/<?php echo  $campaign['Campaign']['id'] ?>">
-                    <img width="140" src="<?php echo $fundraisingHelper->getImage($campaign, array('prefix' => '150_square'))?>" class="campaign-thumb" />
-                </a>
-            <?php else: ?>
-                <a href="<?php echo  $this->request->base ?>/fundraisings/view/<?php echo  $campaign['Campaign']['id'] ?>/<?php echo  seoUrl($campaign['Campaign']['title']) ?>">
-                    <img width="140" src="<?php echo $fundraisingHelper->getImage($campaign, array('prefix' => '150_square'))?>" class="campaign-thumb" />
-                </a>
-            <?php endif; ?>
+            <a href="<?php echo  $this->request->base ?>/fundraisings/view/<?php echo  $campaign['Campaign']['id'] ?>/<?php echo  seoUrl($campaign['Campaign']['title']) ?>">
+                <img width="140" src="<?php echo $fundraisingHelper->getImage($campaign, array('prefix' => '150_square'))?>" class="campaign-thumb" />
+            </a>
             <?php if(!empty($uid) && (($campaign['Campaign']['user_id'] == $uid ) ||  (!empty($cuser) && $cuser['Role']['is_admin']) ) ): ?>
             <div class="list_option">
                     <div class="dropdown">
@@ -44,11 +39,7 @@
                 </div>
             <?php endif; ?>
             <div class="campaign-info">
-                <?php if(!empty( $ajax_view )): ?>
-                    <a class="ajaxLoadCampaignDetail title" href="javascript:void(0)" data-url="<?php echo  $this->request->base ?>/fundraisings/ajax_view/<?php echo  $campaign['Campaign']['id'] ?>"><?php echo  h($campaign['Campaign']['title']) ?></a>
-                <?php else: ?>
-                    <a class="title" href="<?php echo  $this->request->base ?>/fundraisings/view/<?php echo  $campaign['Campaign']['id'] ?>/<?php echo  seoUrl($campaign['Campaign']['title']) ?>"><?php echo  h($campaign['Campaign']['title']) ?></a>
-                <?php endif; ?>
+                <a class="title" href="<?php echo  $this->request->base ?>/fundraisings/view/<?php echo  $campaign['Campaign']['id'] ?>/<?php echo  seoUrl($campaign['Campaign']['title']) ?>"><?php echo  h($campaign['Campaign']['title']) ?></a>
                 <div class="extra_info">
                     <?php if(!empty($topic['LastDonor'])):?>
                         <?php echo __( 'Last donated by %s', $this->Moo->getName($campaign['LastDonor'], false))?>
@@ -137,6 +128,7 @@
     <?php if (isset($more_url)&& !empty($more_result)): ?>
         <?php $this->Html->viewMore($more_url) ?>
     <?php endif; ?>
+    </ul>
 <?php endif; ?>
 
 <?php if($this->request->is('ajax')): ?>

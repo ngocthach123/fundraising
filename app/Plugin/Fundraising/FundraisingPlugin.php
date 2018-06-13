@@ -239,11 +239,10 @@ EOF;
             $mailModel->locale = $language;
             $data_translate['subject'] = 'Thanks for you donation';
             $content = <<<EOF
-		    <p>[header]</p>
-		    <p>Hello [receive_name]</p>
+		    <p>Hello [receive_name],</p>
 			<p>Thank for your donation, we have got the money and updated your donation status in our donor list.</p>
             <p>Message from campaign owner: [message]</p>
-            <p>Please click on below link to view details.<br/>[link]</p>
+            <p>Please click on below link to view details.<br/><a href="[link]">[link]</a></p>
 			<p>[footer]</p>
 EOF;
             $data_translate['content'] = $content;
@@ -264,11 +263,10 @@ EOF;
             $mailModel->locale = $language;
             $data_translate['subject'] = 'Your donation record has been deleted because money is not received';
             $content = <<<EOF
-		    <p>[header]</p>
-		    <p>Hello [receive_name]</p>
+		    <p>Hello [receive_name],</p>
 			<p>I would like to inform that your donation record has been deleted from donors list in our campaign because money has not re</p>
             <p>Message from campaign owner: [message]</p>
-            <p>Please click on below link to view details.<br/>[link]</p>
+            <p>Please click on below link to view details.<br/><a href="[link]">[link]</a></p>
 			<p>[footer]</p>
 EOF;
             $data_translate['content'] = $content;

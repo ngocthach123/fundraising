@@ -40,7 +40,7 @@ class FundraisingHelper extends AppHelper
     public function getImage($item, $options)
     {
         $prefix = (isset($options['prefix'])) ? $options['prefix'] . '_' : '';
-        return $this->Storage->getUrl($item[key($item)]['id'], $prefix, $item[key($item)]['thumbnail'], "fundraisings");
+        return $this->Storage->getUrl($item[key($item)]['id'], $prefix, $item[key($item)]['thumbnail'], "campaigns");
 
     }
 

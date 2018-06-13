@@ -16,10 +16,12 @@
 	?>
 		<li class="full_content p_m_10">
 			<div class="donor-name">
-				<?php if($donor['CampaignDonor']['user_id']):?>
+				<?php if($donor['CampaignDonor']['user_id'] > 0):?>
 					<a href="<?php echo $donor['User']['moo_href'];?>"><?php echo $donor['CampaignDonor']['name'];?></a>
-				<?php else:?>
-					<?php echo __('Anonymous');?>
+				<?php elseif($donor['CampaignDonor']['user_id'] == 0):?>
+					<a><?php echo __('Anonymous');?></a>
+                <?php else:?>
+                    <a><?php echo $donor['CampaignDonor']['name'];?></a>
 				<?php endif;?>
 			</div>
 			<div class="donor-info"><?php echo __('Donated %s via %s', $currency['Currency']['symbol'].$donor['CampaignDonor']['amount'], $method);?> <?php echo $this->Moo->getTime($donor['CampaignDonor']['created'], Configure::read('core.date_format'), $utz)?></div>

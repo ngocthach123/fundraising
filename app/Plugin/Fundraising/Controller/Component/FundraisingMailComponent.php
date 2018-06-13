@@ -10,30 +10,18 @@ App::uses('MooMailComponent', 'Mail.Controller/Component');
 
 class FundraisingMailComponent extends MooMailComponent
 {
-    public function send($recipient, $type, array $params = array())
+    public function __construct($request = null, $response = null)
     {
-        if (!isset($params['mail_queueing']))
-        {
-            if (!$this->_settings['mail_queueing'] || (isset($params['queue']) && $params['queue'] === false))
-            {
-                return $this->sendRow($recipient,$type,$params);
-            }
-        }
-        if (is_array($recipient))
-        {
-            $recipient = $recipient['User']['email'];
-        }
-
-        $this->Mailrecipient->clear();
-        $this->Mailrecipient->save(array(
-            'type' => $type,
-            'recipient'	=> $recipient,
-            'params' => serialize($params),
-            'creation_time' => date('Y-m-d H:i:s')
-        ));
+        parent::__construct($request, $response);
+        $this->FundraisingMail = ClassRegistry::init('Fundraising.FundraisingMail');
     }
 
-    function sendRow($recipient, $type, array $rParams = array())
+    public function send($recipient, $target_id, array $params = array())
+    {
+        return $this->sendRow($recipient,$target_id,$params);
+    }
+
+    function sendRow($recipient, $target_id, array $rParams = array())
     {
         $language = isset($rParams['lang']) ? $rParams['lang'] : '';
         if (is_string($recipient))
@@ -56,29 +44,18 @@ class FundraisingMailComponent extends MooMailComponent
                 return;
         }
 
-        if (!$language)
-        {
-            if (is_array($recipient))
-            {
-                if (isset($recipient['User']['lang']) && $recipient['User']['lang'])
-                {
-                    $language = $recipient['User']['lang'];
-                }
-            }
+        $templete = $this->FundraisingMail->getMail($target_id);
+
+        if (empty($templete)) {
+            $templete = $this->FundraisingMail->initMail();
         }
-
-        $language = ($language ? $language : $this->_language_default);
-
-        $templete = $this->getTranslateByType($type,$language);
-
-        if (!$templete)
-            return;
+        $templete = $templete['FundraisingMail'];
 
         $controller = new Controller();
         $controller->getEventManager()->dispatch(new CakeEvent('Mail.Controller.Component.MooMailComponent.BeforeSend', $this,array(
             'rParams' => &$rParams,
             'recipient' => &$recipient,
-            'type' => &$type,
+            'type' => '',
             'template' => &$templete,
             'language' => &$language
         )));
@@ -95,14 +72,6 @@ class FundraisingMailComponent extends MooMailComponent
 
         if ($is_user)
         {
-            $headerPrefixTranslate = $this->getTranslateByType('header_member',$language);
-            $bodyHeader = $headerPrefixTranslate['content'];
-            $subjectHeader = $headerPrefixTranslate['subject'];
-
-            $footerPrefixTranslate = $this->getTranslateByType('footer_member',$language);
-            $bodyFooter = $footerPrefixTranslate['content'];
-            $subjectFooter = $footerPrefixTranslate['subject'];
-
             $recipientEmail = $recipient['User']['email'];
             $recipientName = $recipient['User']['name'];
 
@@ -112,14 +81,6 @@ class FundraisingMailComponent extends MooMailComponent
         }
         else
         {
-            $headerPrefixTranslate = $this->getTranslateByType('header',$language);
-            $bodyHeader = $headerPrefixTranslate['content'];
-            $subjectHeader = $headerPrefixTranslate['subject'];
-
-            $footerPrefixTranslate = $this->getTranslateByType('footer',$language);
-            $bodyFooter = $footerPrefixTranslate['content'];
-            $subjectFooter = $footerPrefixTranslate['subject'];
-
             $recipientEmail = $recipient;
             $recipientName = $recipient;
 
@@ -153,18 +114,8 @@ class FundraisingMailComponent extends MooMailComponent
                 $subjectTemplate  = str_replace($var, $val, $subjectTemplate);
                 $bodyTemplate  = str_replace($var, $val, $bodyTemplate);
 
-                $bodyHeader = str_replace($var, $val, $bodyHeader);
-                $subjectHeader = str_replace($var, $val, $subjectHeader);
-
-                $bodyFooter = str_replace($var, $val, $bodyFooter);
-                $subjectFooter = str_replace($var, $val, $subjectFooter);
             }
         }
-        $subjectTemplate  = str_replace('[header]', $subjectHeader, $subjectTemplate);
-        $subjectTemplate  = str_replace('[footer]', $subjectFooter, $subjectTemplate);
-
-        $bodyTemplate  = str_replace('[header]', $bodyHeader, $bodyTemplate);
-        $bodyTemplate  = str_replace('[footer]', $bodyFooter, $bodyTemplate);
 
         $current_language = Configure::read('Config.language');
         Configure::write('Config.language',$language);
@@ -217,7 +168,6 @@ class FundraisingMailComponent extends MooMailComponent
 
         try{
             $email->send($bodyTemplate);
-            $this->log(sprintf('Send mail (%s) to %s with param %s', $type, $recipientEmail,print_r($rParams,true)));
         } catch (Exception $ex) {
             $this->log($ex->getMessage());
         }

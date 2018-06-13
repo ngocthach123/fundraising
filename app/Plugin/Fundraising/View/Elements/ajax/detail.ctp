@@ -61,6 +61,14 @@
                     <?php echo $this->Time->format( $campaign['Campaign']['expire'], '%b %d, %Y', false, $utz);?>
                     <?php else: echo __('Unlimited'); endif;?>
                 </div>
+                <div class="col-md-4">
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $percent;?>" aria-valuemin="0" aria-valuemax="100" style="width:<?php echo $percent;?>%">
+                            <span class="sr-only">70</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
                 <?php if(empty($campaign['Campaign']['expire']) || strtotime($campaign['Campaign']['expire']) > time() ):?>
                 <a class="btn-action btn" href="<?php echo $this->request->base .'/fundraisings/donate/'.$campaign['Campaign']['id']?>"><?php echo __('Donate now');?> </a>
                 <?php endif;?>

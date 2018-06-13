@@ -111,8 +111,8 @@ class FundraisingsController extends FundraisingAppController {
                
         $this->set('data', $data);
         
-        if ($page == 1 && $type == 'home'){
-            $this->render('/Elements/ajax/home_campaign');
+        if (($page == 1 && $type == 'user') ||($page == 1 && $type == 'home')){
+            $this->render('/Elements/lists/campaigns_list_m');
         }
         else{
             if ($this->request->is('ajax')){
@@ -272,13 +272,6 @@ class FundraisingsController extends FundraisingAppController {
     }
 
     public function view($id = null, $type = 'info') {
-//        //send mail
-//        $fundraisingMailComponent = MooCore::getInstance()->getComponent('Fundraising.FundraisingMail');
-//        $fundraisingMailComponent->send('asd','fundraising_receive_donor',
-//            array(
-//            )
-//        );
-
         $id = intval($id);
         
         $this->Campaign->recursive = 2;
@@ -306,6 +299,9 @@ class FundraisingsController extends FundraisingAppController {
             case 'mail':
                 $this->loadModel('Fundraising.FundraisingMail');
                 $mail = $this->FundraisingMail->getMail($id);
+                if(empty($mail)){
+                    $mail = $this->FundraisingMail->initMail();
+                }
                 $this->set('mail', $mail);
                 $this->set('campaign', $campaign);
                 break;
@@ -379,6 +375,7 @@ class FundraisingsController extends FundraisingAppController {
     private function _getCampaignDetail($campaign) {
         $uid = $this->Auth->user('id');
         $data = array ();
+        $percent = round(($campaign['Campaign']['raised_amount']/$campaign['Campaign']['target_amount'])*100);
 
         $this->loadModel('Like');
         $this->loadModel('Comment');
@@ -401,6 +398,7 @@ class FundraisingsController extends FundraisingAppController {
         $data['more_comments'] = '/comments/browse/Fundraising_Campaign/' . $campaign['Campaign']['id'] . '/page:' . ($page + 1) ;
        
         $this->set('data', $data);
+        $this->set('percent', $percent);
     }
 
     /*
@@ -508,14 +506,14 @@ class FundraisingsController extends FundraisingAppController {
 
                 $i = 1;
 
-
+                $mooMailComponent = MooCore::getInstance()->getComponent('Mail.MooMail');
                 foreach ($emails as $email) {
                     $invite_checksum = uniqid();
                     if ($i <= 10) {
                         if (Validation::email(trim($email))) {
                             $ssl_mode = Configure::read('core.ssl_mode');
                             $http = (!empty($ssl_mode)) ? 'https' :  'http';
-                            $this->MooMail->send(trim($email),'fundraising_invite_none_member',
+                            $mooMailComponent->send(trim($email),'fundraising_invite_none_member',
                                 array(
                                     'campaign_title' => $campaign['Campaign']['moo_title'],
                                     'link' => $http.'://'.$_SERVER['SERVER_NAME'].$campaign['Campaign']['moo_href'].'/'.$invite_checksum,
@@ -612,7 +610,7 @@ class FundraisingsController extends FundraisingAppController {
             }
 
             if(empty($data['anonymous'])){
-                $data['user_id'] = $uid;
+                $data['user_id'] = $uid ? $uid : -1;
             }else{
                 $data['user_id'] = 0;
             }
@@ -623,8 +621,10 @@ class FundraisingsController extends FundraisingAppController {
                 $hide_feed = 1;
             }
 
-            $data['email'] = $cuser['email'];
-            $data['name'] = $cuser['name'];
+            if(!empty($cuser)) {
+                $data['email'] = $cuser['email'];
+                $data['name'] = $cuser['name'];
+            }
             $data['method'] = 'paypal';
             $data['status'] = 2;
 
@@ -654,7 +654,7 @@ class FundraisingsController extends FundraisingAppController {
             $this->loadModel('Fundraising.CampaignDonor');
 
             $data = $this->request->data;
-            $uid = $this->Auth->user('id');
+            $uid = $this->Auth->user('id') ? $this->Auth->user('id') : -1;
             $this->CampaignDonor->set($data);
             $this->_validateData($this->CampaignDonor);
 
@@ -767,9 +767,10 @@ class FundraisingsController extends FundraisingAppController {
 
             //send mail
             if(!empty($donor['CampaignDonor']['email'])) {
+                $mooMailComponent = MooCore::getInstance()->getComponent('Mail.MooMail');
                 $ssl_mode = Configure::read('core.ssl_mode');
                 $http = (!empty($ssl_mode)) ? 'https' : 'http';
-                $this->MooMail->send(trim($donor['CampaignDonor']['email']), 'fundraising_delete_donor',
+                $mooMailComponent->send(trim($donor['CampaignDonor']['email']), 'fundraising_delete_donor',
                     array(
                         'receive_name' => $donor['CampaignDonor']['name'],
                         'message' => $this->request->data['message'],
@@ -816,15 +817,18 @@ class FundraisingsController extends FundraisingAppController {
             $this->Campaign->updateTotalRaised($donor['CampaignDonor']['target_id']);
 
             //send mail
-            $ssl_mode = Configure::read('core.ssl_mode');
-            $http = (!empty($ssl_mode)) ? 'https' :  'http';
-            $this->MooMail->send(trim($donor['CampaignDonor']['email']),'fundraising_receive_donor',
-                array(
-                    'receive_name' => $donor['CampaignDonor']['name'],
-                    'message' => $this->request->data['message'],
-                    'link' => $http.'://'.$_SERVER['SERVER_NAME'].$donor['Campaign']['moo_href'].'/',
-                )
-            );
+            if(!empty($donor['CampaignDonor']['email'])) {
+                $mooMailComponent = MooCore::getInstance()->getComponent('Mail.MooMail');
+                $ssl_mode = Configure::read('core.ssl_mode');
+                $http = (!empty($ssl_mode)) ? 'https' : 'http';
+                $mooMailComponent->send(trim($donor['CampaignDonor']['email']), 'fundraising_receive_donor',
+                    array(
+                        'receive_name' => $donor['CampaignDonor']['name'],
+                        'message' => $this->request->data['message'],
+                        'link' => $http . '://' . $_SERVER['SERVER_NAME'] . $donor['Campaign']['moo_href'] . '/',
+                    )
+                );
+            }
             $this->Session->setFlash( __('Status changed'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
 
             $response = array(
@@ -899,6 +903,15 @@ class FundraisingsController extends FundraisingAppController {
                 if(!empty($donor)) {
                     $this->CampaignDonor->updateStatus($id, 1);
 
+                    if(empty($donor['CampaignDonor']['email'])){
+                        $this->CampaignDonor->set(array(
+                            'id' => $id,
+                            'email' => @$_REQUEST['payer_email'],
+                            'name' => @$_REQUEST['first_name'].' '.@$_REQUEST['last_name'],
+                        ));
+                        $this->CampaignDonor->save();
+                    }
+
                     $this->Campaign->updateCounter($donor['CampaignDonor']['target_id'], 'donor_count', array('CampaignDonor.target_id' => $donor['CampaignDonor']['target_id'], 'CampaignDonor.status <>' => 2), 'CampaignDonor');
                     $this->Campaign->updateTotalRaised($donor['CampaignDonor']['target_id']);
 
@@ -920,6 +933,19 @@ class FundraisingsController extends FundraisingAppController {
                             'params' => 'item',
                             'plugin' => 'Fundraising'
                         ));
+                    }
+
+                    //send mail
+                    if(!empty($donor['CampaignDonor']['email'])) {
+                        $fundraisingMailComponent = MooCore::getInstance()->getComponent('Fundraising.FundraisingMail');
+                        $ssl_mode = Configure::read('core.ssl_mode');
+                        $http = (!empty($ssl_mode)) ? 'https' : 'http';
+                        $fundraisingMailComponent->send($donor['CampaignDonor']['email'], $donor['CampaignDonor']['target_id'],
+                            array(
+                                'donor_name' => $donor['CampaignDonor']['name'],
+                                'donation_url' =>  $http . '://' . $_SERVER['SERVER_NAME'] .$this->request->base.'/fundraisings/view/'.$donor['CampaignDonor']['target_id'],
+                            )
+                        );
                     }
                 }
             }

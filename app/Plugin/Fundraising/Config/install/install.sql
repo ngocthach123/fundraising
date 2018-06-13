@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}fundraising_mails` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `target_id` int(11) NOT NULL DEFAULT '0',
   `content` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
-  `vars` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
   `subject` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type` (`target_id`)
