@@ -1,13 +1,13 @@
 <?php
-$this->Html->addCrumb(__('Plugins Manager'), '/admin/plugins');
-$this->Html->addCrumb(__('Fundraising Setting'), array('controller' => 'fundraising_settings', 'action' => 'admin_index'));
+$this->Html->addCrumb(__d('fundraising','Plugins Manager'), '/admin/plugins');
+$this->Html->addCrumb(__d('fundraising','Fundraising Setting'), array('controller' => 'fundraising_settings', 'action' => 'admin_index'));
 echo $this->Html->css(array('jquery-ui', 'footable.core.min'), null, array('inline' => false));
 echo $this->Html->script(array('jquery-ui', 'footable'), array('inline' => false));
 $this->startIfEmpty('sidebar-menu');
 echo $this->element('admin/adminnav', array('cmenu' => 'Fundraising'));
 $this->end();
 ?>
-<?php echo  $this->Moo->renderMenu('Fundraising', __('Settings')); ?>
+<?php echo  $this->Moo->renderMenu('Fundraising', __d('fundraising','Settings')); ?>
 
 <div class="portlet-body form admin_fundraising_setting">
     <div class=" portlet-tabs">

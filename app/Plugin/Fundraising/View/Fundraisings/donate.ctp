@@ -12,7 +12,7 @@
                                 <form action="" id="formDonation" method="post">
                                     <?php echo $this->Form->hidden( 'target_id', array( 'value' => $campaign['Campaign']['id'] ) ); ?>
                                     <li>
-                                        <span class="form-title"><?php echo __('How much do you want to donate?');?></span>
+                                        <span class="form-title"><?php echo __d('fundraising','How much do you want to donate?');?></span>
                                         <?php if(!empty($campaign['Campaign']['predefined'])):?>
                                             <div class="wrap-predefined">
                                                 <?php foreach (explode(',',$campaign['Campaign']['predefined']) as $price):?>
@@ -20,7 +20,7 @@
                                                 <?php endforeach;?>
                                             </div>
                                         <?php endif;?>
-                                        <label class="form-label"><?php echo __('Your Donation');?></label>:
+                                        <label class="form-label"><?php echo __d('fundraising','Your Donation');?></label>:
                                         <?php echo $this->Form->text( 'amount', array( 'value' => '' ) ); ?>
                                     </li>
                                     <li>
@@ -30,7 +30,7 @@
                                             'class' => 'checkbox-donate',
                                             'checked' => false
                                             ));
-                                            echo __('Donate as anonymous');
+                                            echo __d('fundraising','Donate as anonymous');
                                         ?>
                                     </li>
                                     <li>
@@ -40,13 +40,13 @@
                                         'class' => 'checkbox-donate',
                                         'checked' => false
                                         ));
-                                        echo __('Do not show my donation at main feed');
+                                        echo __d('fundraising','Do not show my donation at main feed');
                                         ?>
                                     </li>
                                     <li>
-                                        <label class="form-label"><?php echo __('Leave your message (optional)');?></label>:
+                                        <label class="form-label"><?php echo __d('fundraising','Leave your message (optional)');?></label>:
                                         <?php echo $this->Form->textarea( 'message', array( 'value' => '') ); ?>
-                                        <span class="form-note"><?php echo __('Let them know why you donated, to honour a loved one or send a word of encouragement. Your comment will appear on the campaign page');?></span>
+                                        <span class="form-note"><?php echo __d('fundraising','Let them know why you donated, to honour a loved one or send a word of encouragement. Your comment will appear on the campaign page');?></span>
                                     </li>
                                     <li>
                                         <?php
@@ -55,9 +55,9 @@
                                         'class' => 'checkbox-donate',
                                         'checked' => false
                                         ));
-                                        echo __('I have read and accepted all the ');
+                                        echo __d('fundraising','I have read and accepted all the ');
                                         ?>
-                                        <a id="view_term" href="#"><?php echo __('terms and conditions');?></a>
+                                        <a id="view_term" href="#"><?php echo __d('fundraising','terms and conditions');?></a>
                                         <div id="term_content"><?php echo $campaign['Campaign']['term'];?></div>
                                     </li>
                                     <?php if ($this->Moo->isRecaptchaEnabled()): ?>
@@ -77,7 +77,7 @@
                                 </form>
                                 <?php if($campaign['Campaign']['bank']):?>
                                     <li>
-                                        <p><?php echo __('For offline payment please send money to the following details:');?></p>
+                                        <p><?php echo __d('fundraising','For offline payment please send money to the following details:');?></p>
                                         <p><?php echo $campaign['Campaign']['bank_info'];?></p>
                                     </li>
                                 <?php endif;?>

@@ -1,1 +1,1 @@
-<?php echo __('invited you to donate "%s"', $notification['Notification']['params']);?>
+<?php echo __d('fundraising','invited you to donate "%s"', $notification['Notification']['params']);?>

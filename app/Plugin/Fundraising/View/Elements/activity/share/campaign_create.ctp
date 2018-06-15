@@ -17,11 +17,11 @@ $campaignHelper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
                 <?php if ($show_subject): ?>
             &rsaquo; <a target="_blank" href="<?php echo $subject[$name]['moo_href'] ?>"><?php echo h($subject[$name]['moo_title']) ?></a>
                 <?php else: ?>
-                    <?php echo __('created a new campaign'); ?>
+                    <?php echo __d('fundraising','created a new campaign'); ?>
                 <?php endif; ?>
 
             <?php else: ?>
-                <?php echo __('created a new campaign'); ?>
+                <?php echo __d('fundraising','created a new campaign'); ?>
             <?php endif; ?>
         </div>
 

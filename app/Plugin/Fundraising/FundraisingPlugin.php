@@ -331,9 +331,9 @@ EOF;
     public function menu()
     {
         return array(
-            __('General') => array('plugin' => 'fundraising', 'controller' => 'fundraising_plugins', 'action' => 'admin_index'),
-            __('Settings') => array('plugin' => 'fundraising', 'controller' => 'fundraising_settings', 'action' => 'admin_index'),
-            __('Categories') => array('plugin' => 'fundraising', 'controller' => 'fundraising_categories', 'action' => 'admin_index'),
+            __d('fundraising','General') => array('plugin' => 'fundraising', 'controller' => 'fundraising_plugins', 'action' => 'admin_index'),
+            __d('fundraising','Settings') => array('plugin' => 'fundraising', 'controller' => 'fundraising_settings', 'action' => 'admin_index'),
+            __d('fundraising','Categories') => array('plugin' => 'fundraising', 'controller' => 'fundraising_categories', 'action' => 'admin_index'),
         );
     }
 

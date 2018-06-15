@@ -59,21 +59,21 @@
 
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
-    <h4 class="modal-title"><?php echo __('Add New');?></h4>
+    <h4 class="modal-title"><?php echo __d('fundraising','Add New');?></h4>
 </div>
 <div class="modal-body">
     <form id="createForm" class="form-horizontal" role="form">
         <?php echo $this->Form->hidden('id', array('value' => $category['Category']['id'])); ?>
         <div class="form-body">
-            <h4><?php echo __('Settings');?></h4>
+            <h4><?php echo __d('fundraising','Settings');?></h4>
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php echo __('Name');?></label>
+                <label class="col-md-3 control-label"><?php echo __d('fundraising','Name');?></label>
                 <div class="col-md-9">
                     <?php echo $this->Form->text('name', array('placeholder' => 'Enter text', 'class' => 'form-control', 'value' => $category['Category']['name'])); ?>
 
                 </div>
                 <?php if (!$bIsEdit) : ?>
-                    <div class="tips" style="margin-left: 165px;">*<?php echo  __('You can add translation language after creating category') ?></div>
+                    <div class="tips" style="margin-left: 165px;">*<?php echo  __d('fundraising','You can add translation language after creating category') ?></div>
                 <?php else : ?>
                     <div class="tips" style="margin-left: 165px;">
                         <?php
@@ -84,8 +84,8 @@
                                             $category['Category']['id']
                                             
                                         )),
-             'title' => __('Translation'),
-             'innerHtml'=> __('Translation'),
+             'title' => __d('fundraising','Translation'),
+             'innerHtml'=> __d('fundraising','Translation'),
      ));
  ?>
                        
@@ -96,34 +96,34 @@
                 <?php echo $this->Form->hidden('type', array('value' => 'Fundraising')); ?>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php echo __('Header');?></label>
+                <label class="col-md-3 control-label"><?php echo __d('fundraising','Header');?></label>
                 <div class="col-md-9">
                     <div class="checkbox-list">
                         <label class="checkbox-inline">
                             <?php echo $this->Form->checkbox('header', array('checked' => $category['Category']['header'], 'onclick' => 'toggleField()', 'id' => 'cat_header')); ?>
                             <span class="help-block">
-                                <?php echo __('Category header is top level category<br />which does not allow items to be posted')?>
+                                <?php echo __d('fundraising','Category header is top level category<br />which does not allow items to be posted')?>
                             </span>
                         </label>
                     </div>
                 </div>
             </div>
             <div class="form-group opt_field <?php if ($category['Category']['header']): ?>hide<?php endif; ?>">
-                <label class="col-md-3 control-label"><?php echo __('Parent Category');?></label>
+                <label class="col-md-3 control-label"><?php echo __d('fundraising','Parent Category');?></label>
                 <div class="col-md-9">
                     <?php echo $this->Form->select('parent_id', $headers, array('class' => 'form-control', 'value' => $headers, 'empty' => false)); ?>
 
                 </div>
             </div>
             <div class="form-group opt_field <?php if ($category['Category']['header']): ?>hide<?php endif; ?>">
-                <label class="col-md-3 control-label"><?php echo __('Description');?></label>
+                <label class="col-md-3 control-label"><?php echo __d('fundraising','Description');?></label>
                 <div class="col-md-9">
                     <?php echo $this->Form->textarea('description', array('class' => 'form-control', 'value' => $category['Category']['description'])); ?>
 
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-3 control-label"><?php echo __('Active');?></label>
+                <label class="col-md-3 control-label"><?php echo __d('fundraising','Active');?></label>
                 <div class="col-md-9">
                     <div class="checkbox-list">
                         <label class="checkbox-inline">
@@ -142,7 +142,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn default" data-dismiss="modal"><?php echo  __('Close') ?></button>
-    <a href="#" id="createButton" class="btn btn-action"><?php echo  __('Save') ?></a>
+    <button type="button" class="btn default" data-dismiss="modal"><?php echo  __d('fundraising','Close') ?></button>
+    <a href="#" id="createButton" class="btn btn-action"><?php echo  __d('fundraising','Save') ?></a>
 
 </div>

@@ -16,7 +16,7 @@ mooFundraising.initOnView();
 
     <?php if(!empty($tags)): ?>
         <div class="box2">
-            <h3><?php echo __( 'Tags')?></h3>
+            <h3><?php echo __d('fundraising', 'Tags')?></h3>
             <div class="box_content">
                 <?php echo $this->element( 'blocks/tags_item_block' ); ?>
             </div>

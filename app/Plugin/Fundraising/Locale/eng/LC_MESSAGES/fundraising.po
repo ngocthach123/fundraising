@@ -1,0 +1,676 @@
+# LANGUAGE translation of CakePHP Application
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: FundraisingPlugin.php:334
+#: View/FundraisingPlugins/admin_index.ctp:10
+msgid "General"
+msgstr ""
+
+#: FundraisingPlugin.php:335
+#: View/FundraisingCategories/admin_create.ctp:68
+#: View/FundraisingSettings/admin_index.ctp:10
+msgid "Settings"
+msgstr ""
+
+#: FundraisingPlugin.php:336
+#: View/Elements/lists/categories_list.ctp:8
+#: View/FundraisingCategories/admin_index.ctp:10
+msgid "Categories"
+msgstr ""
+
+#: Controller/FundraisingCategoriesController.php:27
+msgid "Categories Manager"
+msgstr ""
+
+#: Controller/FundraisingCategoriesController.php:77
+msgid "Category has been successfully saved"
+msgstr ""
+
+#: Controller/FundraisingPluginsController.php:32
+#: View/FundraisingPlugins/admin_index.ctp:3
+msgid "Fundraising Manager"
+msgstr ""
+
+#: Controller/FundraisingPluginsController.php:50
+msgid "Campaigns have been deleted"
+msgstr ""
+
+#: Controller/FundraisingPluginsController.php:67
+msgid "Campaigns has been moved"
+msgstr ""
+
+#: Controller/FundraisingSettingsController.php:27
+#: View/FundraisingSettings/admin_index.ctp:3
+msgid "Fundraising Setting"
+msgstr ""
+
+#: Controller/FundraisingsController.php:147
+#: View/Elements/ajax/detail.ctp:27
+#: View/Elements/lists/campaigns_list.ctp:26
+#: View/Fundraisings/create.ctp:27
+msgid "Edit Campaign"
+msgstr ""
+
+#: Controller/FundraisingsController.php:156
+#: View/Elements/lists/campaigns_list_m.ctp:4
+#: View/Fundraisings/create.ctp:27
+#: View/Fundraisings/index.ctp:23
+msgid "Create New Campaign"
+msgstr ""
+
+#: Controller/FundraisingsController.php:186
+msgid "Please select payment method"
+msgstr ""
+
+#: Controller/FundraisingsController.php:413
+msgid "Campaign has been deleted"
+msgstr ""
+
+#: Controller/FundraisingsController.php:483
+msgid "Recipient is required"
+msgstr ""
+
+#: Controller/FundraisingsController.php:502;682
+msgid "Invalid security code"
+msgstr ""
+
+#: Controller/FundraisingsController.php:538
+msgid "Invite more friends"
+msgstr ""
+
+#: Controller/FundraisingsController.php:569;641;725
+msgid "An error has occurred, please try again"
+msgstr ""
+
+#: Controller/FundraisingsController.php:607;662
+msgid "You must accept the terms and conditions"
+msgstr ""
+
+#: Controller/FundraisingsController.php:714
+msgid "Successfully sent"
+msgstr ""
+
+#: Controller/FundraisingsController.php:759;810
+msgid "Message is required"
+msgstr ""
+
+#: Controller/FundraisingsController.php:780
+msgid "Donor has been deleted"
+msgstr ""
+
+#: Controller/FundraisingsController.php:833
+msgid "Status changed"
+msgstr ""
+
+#: Controller/FundraisingsController.php:972
+msgid "Pay successfully"
+msgstr ""
+
+#: Lib/FundraisingListener.php:113
+msgid "Are you sure you want to remove this campaign?"
+msgstr ""
+
+#: Lib/FundraisingListener.php:143;160;187
+msgid "Fundraising"
+msgstr ""
+
+#: Lib/FundraisingListener.php:194
+msgid "Find Fundraising"
+msgstr ""
+
+#: Lib/FundraisingListener.php:198
+msgid "Posted by"
+msgstr ""
+
+#: Model/Campaign.php:280
+msgid "Predefined only allow numbers and commas"
+msgstr ""
+
+#: View/Elements/menu_profile.ctp:1
+#: View/Elements/lists/campaigns_list_m.ctp:3
+#: View/Fundraisings/index.ctp:18
+msgid "Campaigns"
+msgstr ""
+
+#: View/Elements/activity/content/campaign_create_share.ctp:32;36
+#: View/Elements/activity/share/campaign_create.ctp:20;24
+#: View/Elements/activity/text/campaign_create.ctp:12;16
+msgid "created a new campaign"
+msgstr ""
+
+#: View/Elements/activity/text/campaign_create_share.ctp:14
+msgid "shared %1$s's <a href=\"%2$s\">post</a>"
+msgstr ""
+
+#: View/Elements/activity/text/campaign_donate.ctp:12;16
+msgid "donated for a campaign"
+msgstr ""
+
+#: View/Elements/activity/text/campaign_item_detail_share.ctp:9
+msgid "shared %1$s's <a href=\"%2$s\">campaign</a>"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:21;22
+msgid "Invite Friends"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:33
+#: View/Elements/lists/campaigns_list.ctp:32
+#: View/Elements/lists/donors_list.ctp:51
+#: View/FundraisingPlugins/admin_index.ctp:27;86
+#: View/Fundraisings/create.ctp:199
+#: View/Fundraisings/delete_donor.ctp:15;35
+msgid "Delete"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:46;47
+msgid "Report Campaign"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:56
+msgid "Created by:"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:57
+#: View/Elements/lists/campaigns_list.ctp:57
+msgid "Target:"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:57;62
+#: View/Elements/ajax/donor.ctp:2
+#: View/Elements/lists/campaigns_list.ctp:57;62
+msgid "Unlimited"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:58
+#: View/Elements/lists/campaigns_list.ctp:58
+msgid "Total raised:"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:59
+msgid "Donations accepted util:"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:73
+msgid "Donate now"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:77
+msgid "Location:"
+msgstr ""
+
+#: View/Elements/ajax/detail.ctp:81
+msgid "Posted in"
+msgstr ""
+
+#: View/Elements/ajax/donor.ctp:6
+msgid "Donors (%s donors, total raised %s, target %s)"
+msgstr ""
+
+#: View/Elements/ajax/email_setting.ctp:4
+msgid "You can customize contain of email that send to donor when they donated here"
+msgstr ""
+
+#: View/Elements/ajax/email_setting.ctp:6
+msgid "Your changes have been saved"
+msgstr ""
+
+#: View/Elements/ajax/email_setting.ctp:18
+msgid "Subject"
+msgstr ""
+
+#: View/Elements/ajax/email_setting.ctp:27
+msgid "Message"
+msgstr ""
+
+#: View/Elements/ajax/email_setting.ctp:31
+msgid "Please do not change [donor_name] and [donation_url] because it will auto replace by system"
+msgstr ""
+
+#: View/Elements/ajax/email_setting.ctp:38
+#: View/FundraisingCategories/admin_create.ctp:146
+#: View/Fundraisings/create.ctp:193
+msgid "Save"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:46;48
+msgid "Last donated by %s"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:46
+#: View/Elements/lists/donors_list.ctp:20
+msgid "Anonymous"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:52
+msgid "Posted by %s"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:59
+msgid "Donation expired until:"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:88
+msgid "People Who Like This"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:105
+msgid "People Who DisLike This"
+msgstr ""
+
+#: View/Elements/lists/campaigns_list.ctp:130
+#: View/Elements/lists/donors_list.ctp:65
+msgid "No more results found"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:10
+#: View/Fundraisings/create.ctp:133
+#: View/Fundraisings/donate.ctp:100
+msgid "Paypal"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:13
+msgid "offline payment"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:27
+msgid "Donated %s via %s"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:30;32
+msgid "Status"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:30
+msgid "received"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:32
+msgid "pending"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:41
+#: View/Fundraisings/receive_donor.ctp:15;35
+msgid "Receive"
+msgstr ""
+
+#: View/Elements/lists/donors_list.ctp:58
+msgid "Message from donor:"
+msgstr ""
+
+#: View/Elements/notification/fundraising_campaign_invite.ctp:1
+msgid "invited you to donate \"%s\""
+msgstr ""
+
+#: View/Elements/sidebar/detail_menu.ctp:2
+msgid "Info"
+msgstr ""
+
+#: View/Elements/sidebar/detail_menu.ctp:3
+msgid "Thank you email settings"
+msgstr ""
+
+#: View/Elements/sidebar/detail_menu.ctp:4
+msgid "Donor"
+msgstr ""
+
+#: View/Elements/sidebar/menu.ctp:2
+msgid "Open Campaigns"
+msgstr ""
+
+#: View/Elements/sidebar/menu.ctp:3
+msgid "Expired Campaigns"
+msgstr ""
+
+#: View/Elements/sidebar/menu.ctp:5
+msgid "My Campaigns"
+msgstr ""
+
+#: View/Elements/sidebar/menu.ctp:6
+msgid "Friends' Campaigns"
+msgstr ""
+
+#: View/Elements/sidebar/search.ctp:4
+msgid "Enter keyword to search"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:62
+#: View/FundraisingCategories/admin_index.ctp:39
+msgid "Add New"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:70
+#: View/FundraisingCategories/admin_index.ctp:64
+msgid "Name"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:76
+msgid "You can add translation language after creating category"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:87;88
+msgid "Translation"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:99
+#: View/FundraisingCategories/admin_index.ctp:68
+msgid "Header"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:105
+msgid "Category header is top level category<br />which does not allow items to be posted"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:112
+msgid "Parent Category"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:119
+#: View/Fundraisings/create.ctp:53
+msgid "Description"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:126
+#: View/FundraisingCategories/admin_index.ctp:69
+msgid "Active"
+msgstr ""
+
+#: View/FundraisingCategories/admin_create.ctp:145
+#: View/Fundraisings/delete_donor.ctp:36
+#: View/Fundraisings/receive_donor.ctp:36
+msgid "Close"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:4
+#: View/FundraisingPlugins/admin_index.ctp:2
+#: View/FundraisingSettings/admin_index.ctp:2
+msgid "Plugins Manager"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:5
+msgid "Fundraising Categories"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:42
+msgid "Save order"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:53
+msgid "You can enable Spam Challenge to force user to answer a challenge question in order to register."
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:54
+msgid "To enable this feature, click System Settings -> Security -> Enable Spam Challenge"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:63
+#: View/FundraisingPlugins/admin_index.ctp:50
+#: View/Fundraisings/admin_index.ctp:26
+msgid "ID"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:65
+msgid "Order"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:66
+#: View/Fundraisings/ajax_invite.ctp:27
+msgid "Type"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:67
+msgid "Parent"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:70
+msgid "Count"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:71
+msgid "Actions"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:103
+msgid "Are you sure you want to delete this category? All parent of sub-category it will also be changed to ROOT. This cannot be undone!"
+msgstr ""
+
+#: View/FundraisingCategories/admin_index.ctp:105
+msgid "Are you sure you want to delete this category? All the items within it will also be deleted. This cannot be undone!"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:34
+msgid "Search by title"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:51
+#: View/Fundraisings/admin_index.ctp:27
+msgid "Title"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:52
+#: View/Fundraisings/admin_index.ctp:28
+msgid "Author"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:53
+#: View/Fundraisings/admin_index.ctp:29
+#: View/Fundraisings/create.ctp:44
+msgid "Category"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:54
+msgid "Date"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:84
+msgid "With selected..."
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:85
+msgid "Move to"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:97
+#: View/Fundraisings/admin_index.ctp:63
+msgid "Previous"
+msgstr ""
+
+#: View/FundraisingPlugins/admin_index.ctp:99
+#: View/Fundraisings/admin_index.ctp:65
+msgid "Next"
+msgstr ""
+
+#: View/Fundraisings/admin_index.ctp:21
+msgid "Campaigns Manager"
+msgstr ""
+
+#: View/Fundraisings/admin_index.ctp:30
+msgid "Group"
+msgstr ""
+
+#: View/Fundraisings/ajax_invite.ctp:16
+msgid "Invite Friends to Donate"
+msgstr ""
+
+#: View/Fundraisings/ajax_invite.ctp:31;39
+msgid "Friends"
+msgstr ""
+
+#: View/Fundraisings/ajax_invite.ctp:31;50
+msgid "Emails"
+msgstr ""
+
+#: View/Fundraisings/ajax_invite.ctp:55
+msgid "Not on your friends list? Enter their emails below (separated by commas)<br />Limit 10 email addresses per request"
+msgstr ""
+
+#: View/Fundraisings/ajax_invite.ctp:69
+msgid "Send Invitations"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:34
+msgid "Campaign Title"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:62
+msgid "Upload photos to description"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:67
+msgid "Upload Queued Files"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:74
+msgid "Target amount"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:75
+msgid "Enter 0 for unlimited goal"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:85
+msgid "Expiration date"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:95
+msgid "Set this to unlimited time"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:102
+msgid "Predefined donation amounts"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:103
+msgid "Define list of amount of money that people can select to donate instead of typing. Please enter number and separate by comma"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:114
+msgid "Location"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:123
+msgid "Payment methods"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:135
+msgid "Paypal email"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:144
+msgid "Bank transfer. Please provide details into the field below"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:155
+msgid "Term and conditions"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:165
+msgid "Thumbnail"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:165
+msgid "Thumbnail only display on campaign listing and share campaign to facebook"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:181
+#: View/Fundraisings/view.ctp:19
+msgid "Tags"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:184
+msgid "Separated by commas or space"
+msgstr ""
+
+#: View/Fundraisings/create.ctp:196
+msgid "Cancel"
+msgstr ""
+
+#: View/Fundraisings/delete_donor.ctp:22
+msgid "Are you sure you want to delete this donor, email will send to notify donor"
+msgstr ""
+
+#: View/Fundraisings/delete_donor.ctp:26
+#: View/Fundraisings/receive_donor.ctp:26
+msgid "Your message to donor is required"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:15
+msgid "How much do you want to donate?"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:23
+msgid "Your Donation"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:33
+msgid "Donate as anonymous"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:43
+msgid "Do not show my donation at main feed"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:47
+msgid "Leave your message (optional)"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:49
+msgid "Let them know why you donated, to honour a loved one or send a word of encouragement. Your comment will appear on the campaign page"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:58
+msgid "I have read and accepted all the "
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:60
+msgid "terms and conditions"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:75
+msgid "Send"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:80
+msgid "For offline payment please send money to the following details:"
+msgstr ""
+
+#: View/Fundraisings/donate.ctp:105
+msgid "Pay Offline"
+msgstr ""
+
+#: View/Fundraisings/index.ctp:4
+msgid "Browse"
+msgstr ""
+
+#: View/Fundraisings/pay_offline.ctp:2
+msgid "Thank for your donation! Please send us your details such as bank account so that we can verify and update into campaign. Your information will not appear if you selected donate as anonymous."
+msgstr ""
+
+#: View/Fundraisings/pay_offline.ctp:6
+msgid "Your name"
+msgstr ""
+
+#: View/Fundraisings/pay_offline.ctp:15
+msgid "Your email"
+msgstr ""
+
+#: View/Fundraisings/pay_offline.ctp:24
+msgid "Other details like bank account...(optional)"
+msgstr ""
+
+#: View/Fundraisings/receive_donor.ctp:22
+msgid "Are you sure you want to change status to received, email will send to notify donor"
+msgstr ""
+

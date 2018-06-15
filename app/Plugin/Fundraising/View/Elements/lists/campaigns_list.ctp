@@ -23,13 +23,13 @@
 
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <?php if ( ($campaign['Campaign']['user_id'] == $uid ) || ( !empty($cuser['Role']['is_admin']) ) ): ?>
-                            <li><?php echo $this->Html->link(__( 'Edit Campaign'), array(
+                            <li><?php echo $this->Html->link(__d('fundraising', 'Edit Campaign'), array(
                               'plugin' => 'Fundraising',
                               'controller' => 'fundraisings',
                               'action' => 'create',
                               $campaign['Campaign']['id']
                           )); ?></li>
-                            <li><a href="javascript:void(0);" class="deleteCampaign" data-id="<?php echo $campaign['Campaign']['id']?>"><?php echo __( 'Delete')?></a></li>
+                            <li><a href="javascript:void(0);" class="deleteCampaign" data-id="<?php echo $campaign['Campaign']['id']?>"><?php echo __d('fundraising', 'Delete')?></a></li>
                             <li class="seperate"></li>
                             <?php endif; ?>
 
@@ -43,23 +43,23 @@
                 <div class="extra_info">
                     <?php if($campaign['Campaign']['lastdonor_id'] != 0):?>
                         <?php if($campaign['Campaign']['lastdonor_id'] == '-1'):?>
-                            <?php echo __( 'Last donated by %s', '<a>'.__('Anonymous').'</a>')?>
+                            <?php echo __d('fundraising', 'Last donated by %s', '<a>'.__d('fundraising','Anonymous').'</a>')?>
                         <?php else:?>
-                            <?php echo __( 'Last donated by %s', $this->Moo->getName($campaign['LastDonor'], false))?>
+                            <?php echo __d('fundraising', 'Last donated by %s', $this->Moo->getName($campaign['LastDonor'], false))?>
                         <?php endif;?>
                         <?php echo $this->Moo->getTime( $campaign['Campaign']['last_donate'], Configure::read('core.date_format'), $utz )?>
                     <?php else:?>
-                        <?php echo __( 'Posted by %s', $this->Moo->getName($campaign['User'], false))?>
+                        <?php echo __d('fundraising', 'Posted by %s', $this->Moo->getName($campaign['User'], false))?>
                         <?php echo $this->Moo->getTime( $campaign['Campaign']['created'], Configure::read('core.date_format'), $utz )?>
                     <?php endif;?>
                 </div>
                 <div class="list-campaign-info">
-                    <span><?php echo __('Target:');?></span> <?php echo $campaign['Campaign']['target_amount'] ? $currency['Currency']['symbol'].$campaign['Campaign']['target_amount'] : __('Unlimited');?>,
-                    <span><?php echo __('Total raised:');?></span> <?php echo $currency['Currency']['symbol'].$campaign['Campaign']['raised_amount'];?>,
-                    <span><?php echo __('Donation expired until:');?></span>
+                    <span><?php echo __d('fundraising','Target:');?></span> <?php echo $campaign['Campaign']['target_amount'] ? $currency['Currency']['symbol'].$campaign['Campaign']['target_amount'] : __d('fundraising','Unlimited');?>,
+                    <span><?php echo __d('fundraising','Total raised:');?></span> <?php echo $currency['Currency']['symbol'].$campaign['Campaign']['raised_amount'];?>,
+                    <span><?php echo __d('fundraising','Donation expired until:');?></span>
                         <?php if(!empty($campaign['Campaign']['expire'])):?>
                             <?php echo $this->Time->format( $campaign['Campaign']['expire'], '%b %d, %Y', false, $utz);?>
-                        <?php else: echo __('Unlimited'); endif;?>
+                        <?php else: echo __d('fundraising','Unlimited'); endif;?>
                 </div>
                 <div class="campaign-description-truncate">
                                 <div>
@@ -85,7 +85,7 @@
                                                 'Campaign_Campaign',
                                                 $campaign['Campaign']['id'],
                                             )),
-                 'title' => __('People Who Like This'),
+                 'title' => __d('fundraising','People Who Like This'),
                  'innerHtml'=> '<span class="likeCount">' . $campaign['Campaign']['like_count'] . '</span>',
          ));
      ?>
@@ -102,7 +102,7 @@
                                                                                 'Campaign_Campaign',
                                                                                 $campaign['Campaign']['id'], 1
                                                                             )),
-                                                 'title' => __('People Who DisLike This'),
+                                                 'title' => __d('fundraising','People Who DisLike This'),
                                                  'innerHtml'=>  '<span class="dislikeCount">' . $campaign['Campaign']['dislike_count'] . '</span>',
                                         ));
                                         ?>
@@ -127,7 +127,7 @@
         endforeach;
     }
     else
-        echo '<div class="clear text-center">' . __( 'No more results found') . '</div>';
+        echo '<div class="clear text-center">' . __d('fundraising', 'No more results found') . '</div>';
     ?>
     <?php if (isset($more_url)&& !empty($more_result)): ?>
         <?php $this->Html->viewMore($more_url) ?>

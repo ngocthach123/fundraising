@@ -13,7 +13,7 @@ mooFundraising.initAjaxInvite();
 <?php endif; ?>
 
 <div class="title-modal">
-    <?php echo __('Invite Friends to Donate')?>
+    <?php echo __d('fundraising','Invite Friends to Donate')?>
     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 </div>
 <div class="modal-body" id="simple-modal-body">
@@ -24,11 +24,11 @@ mooFundraising.initAjaxInvite();
 <ul class="list6" style="position:relative">
 	<li>
             <div class='col-md-2'>
-                <?php echo __('Type')?>
+                <?php echo __d('fundraising','Type')?>
             </div>
             <div class='col-md-10'>
                 <div class="m_suggest">
-                	<?php echo $this->Form->select('invite_type',array('1'=>__('Friends'),'2' => __('Emails')),array('empty' => false)); ?>
+                	<?php echo $this->Form->select('invite_type',array('1'=>__d('fundraising','Friends'),'2' => __d('fundraising','Emails')),array('empty' => false)); ?>
                 </div>
             </div>
             <div class='clear'></div>
@@ -36,7 +36,7 @@ mooFundraising.initAjaxInvite();
 	<li>
 	<li id="invite_friend">
             <div class='col-md-2'>
-                <?php echo __('Friends')?>
+                <?php echo __d('fundraising','Friends')?>
             </div>
             <div class='col-md-10'>
                 <div class="m_suggest">
@@ -47,12 +47,12 @@ mooFundraising.initAjaxInvite();
         </li>	
 	<li id="invite_email" style="display:none;">
             <div class='col-md-2'>
-                <?php echo __('Emails')?>
+                <?php echo __d('fundraising','Emails')?>
             </div>    
             <div class='col-md-10'>
                 <?php echo $this->Form->textarea('emails'); ?>
                 <div class='text-description'>
-                    <?php echo __('Not on your friends list? Enter their emails below (separated by commas)<br />Limit 10 email addresses per request')?><br />
+                    <?php echo __d('fundraising','Not on your friends list? Enter their emails below (separated by commas)<br />Limit 10 email addresses per request')?><br />
                 </div>
                 <?php if ($this->Moo->isRecaptchaEnabled() && !$isMobile): ?>        			
                 <div id="recaptcha_content">
@@ -66,7 +66,7 @@ mooFundraising.initAjaxInvite();
 	<li>
             <div class='col-md-2'>&nbsp;</div>
             <div class='col-md-10'>
-                <a href="#" class="button button-action" id="sendButton"><?php echo __('Send Invitations')?></a>
+                <a href="#" class="button button-action" id="sendButton"><?php echo __d('fundraising','Send Invitations')?></a>
             </div>
             <div class='clear'></div>
          </li>

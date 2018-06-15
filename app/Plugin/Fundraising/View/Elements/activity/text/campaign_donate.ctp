@@ -9,9 +9,9 @@ $name = key($subject);
     <?php if ($show_subject): ?>
         &rsaquo; <a href="<?php echo $subject[$name]['moo_href'] ?>"><?php echo h($subject[$name]['moo_title']) ?></a>
     <?php else: ?>
-        <?php echo __('donated for a campaign'); ?>
+        <?php echo __d('fundraising','donated for a campaign'); ?>
     <?php endif; ?>
 
 <?php else: ?>
-    <?php echo __('donated for a campaign'); ?>
+    <?php echo __d('fundraising','donated for a campaign'); ?>
 <?php endif; ?>

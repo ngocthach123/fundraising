@@ -24,7 +24,7 @@ class FundraisingCategoriesController extends FundraisingAppController {
         
         $this->set('categories', $categories);
         $this->set('type', $type);
-        $this->set('title_for_layout', __('Categories Manager'));
+        $this->set('title_for_layout', __d('fundraising','Categories Manager'));
     }
 
     public function admin_create() {
@@ -74,7 +74,7 @@ class FundraisingCategoriesController extends FundraisingAppController {
                 $this->Category->saveField('name', $this->request->data['name']);
             }
         }
-        $this->Session->setFlash(__('Category has been successfully saved'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in'));
+        $this->Session->setFlash(__d('fundraising','Category has been successfully saved'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in'));
 
         $response['result'] = 1;
         echo json_encode($response);

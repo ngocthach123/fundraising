@@ -110,7 +110,7 @@ class FundraisingListener implements CakeEventListener
             ));
 
             $e->addPhraseJs(array(
-                'are_you_sure_you_want_to_remove_this_campaign' => __("Are you sure you want to remove this campaign?"),
+                'are_you_sure_you_want_to_remove_this_campaign' => __d('fundraising',"Are you sure you want to remove this campaign?"),
             ));
         }
     }

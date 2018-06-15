@@ -5,7 +5,7 @@ $categories = $this->requestAction(
 ?>
 
 <ul class="list2 menu-list" id="browse">
-    <li class="cat-header <?php if (Configure::read('core.enable_category_toggle')) echo 'cat_toggle' ?>"><?php echo __('Categories') ?></li>
+    <li class="cat-header <?php if (Configure::read('core.enable_category_toggle')) echo 'cat_toggle' ?>"><?php echo __d('fundraising','Categories') ?></li>
     <?php foreach ($categories as $cat): ?>
         <?php if ($cat['Category']['header']): ?>
             <li class="category_header"><?php echo $cat['Category']['name'] ?></li>

@@ -12,18 +12,18 @@ mooFundraising.initDeleteDonor();
 
 
 <div class="title-modal">
-    <?php echo __('Delete')?>
+    <?php echo __d('fundraising','Delete')?>
     <button style="width: inherit" type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 </div>
 <div class="modal-body">
     <div class="create_form">
         <form id="formDeleteDonor">
             <input type="hidden" name="item_id" value="<?php echo $item_id;?>">
-            <p><?php echo __('Are you sure you want to delete this donor, email will send to notify donor');?></p>
+            <p><?php echo __d('fundraising','Are you sure you want to delete this donor, email will send to notify donor');?></p>
             <ul class="list6 list6sm2" style="position: relative">
                 <li>
                     <div class="col-md-12">
-                        <?php echo __( 'Your message to donor is required')?>
+                        <?php echo __d('fundraising', 'Your message to donor is required')?>
                     </div>
                     <div class="col-md-12">
                         <?php echo $this->Form->textarea('message', array('value' => '')); ?>
@@ -32,8 +32,8 @@ mooFundraising.initDeleteDonor();
                 </li>
 
                 <li class="form-action">
-                    <a href="javascript:void(0)" class="btn btn-action" id="btn_delete_donor"><?php echo __('Delete')?></a>
-                    <button type="button" class="btn default" data-dismiss="modal"><?php echo __('Close')?></button>
+                    <a href="javascript:void(0)" class="btn btn-action" id="btn_delete_donor"><?php echo __d('fundraising','Delete')?></a>
+                    <button type="button" class="btn default" data-dismiss="modal"><?php echo __d('fundraising','Close')?></button>
                     <div class="clear"></div>
                 </li>
             </ul>

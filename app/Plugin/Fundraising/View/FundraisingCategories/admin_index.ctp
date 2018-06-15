@@ -1,13 +1,13 @@
 <?php
 echo $this->Html->css(array('jquery-ui', 'footable.core.min'), null, array('inline' => false));
 echo $this->Html->script(array('jquery-ui', 'footable'), array('inline' => false));
-$this->Html->addCrumb(__('Plugins Manager'), '/admin/plugins');
-$this->Html->addCrumb(__('Fundraising Categories'), array('controller' => 'fundraising_categories', 'action' => 'admin_index'));
+$this->Html->addCrumb(__d('fundraising','Plugins Manager'), '/admin/plugins');
+$this->Html->addCrumb(__d('fundraising','Fundraising Categories'), array('controller' => 'fundraising_categories', 'action' => 'admin_index'));
 $this->startIfEmpty('sidebar-menu');
 echo $this->element('admin/adminnav', array('cmenu' => 'Fundraising'));
 $this->end();
 ?>
-<?php echo  $this->Moo->renderMenu('Fundraising', __('Categories')); ?>
+<?php echo  $this->Moo->renderMenu('Fundraising', __d('fundraising','Categories')); ?>
 
 <?php
 $this->Paginator->options(array('url' => $this->passedArgs));
@@ -36,10 +36,10 @@ $(document).on('hidden.bs.modal', function (e) {
             <div class="col-md-6">
                 <div class="btn-group">
                     <button class="btn btn-gray" data-toggle="modal" data-target="#ajax" href="<?php echo  $this->request->base ?>/admin/fundraising/fundraising_categories/create">
-                        <?php echo __('Add New');?>
+                        <?php echo __d('fundraising','Add New');?>
                     </button>
                     <a style="margin-left: 10px" onclick="save_order()" class="btn btn-gray" >
-                        <?php echo __('Save order');?>
+                        <?php echo __d('fundraising','Save order');?>
                     </a>
                 </div>
             </div>
@@ -50,8 +50,8 @@ $(document).on('hidden.bs.modal', function (e) {
             <div class="col-md-12" style="padding-top: 5px;">
                 <div class="note note-info hide">
                     <p>
-                        <?php echo __('You can enable Spam Challenge to force user to answer a challenge question in order to register.');?> <br/>
-                        <?php echo __('To enable this feature, click System Settings -> Security -> Enable Spam Challenge');?>
+                        <?php echo __d('fundraising','You can enable Spam Challenge to force user to answer a challenge question in order to register.');?> <br/>
+                        <?php echo __d('fundraising','To enable this feature, click System Settings -> Security -> Enable Spam Challenge');?>
                     </p>
                 </div>
             </div>
@@ -60,15 +60,15 @@ $(document).on('hidden.bs.modal', function (e) {
     <table class="table table-striped table-bordered table-hover" id="sample_1">
         <thead>
             <tr class="tbl_head">
-                <th width="50px"><?php echo __('ID');?></th>
-                <th><?php echo __('Name');?></th>
-                <th width="50px"><?php echo __('Order');?></th>
-                <th width="50px"><?php echo __('Type');?></th>
-                <th data-hide="phone"><?php echo __('Parent');?></th>
-                <th width="50px" data-hide="phone"><?php echo __('Header');?></th>
-                <th width="50px" data-hide="phone"><?php echo __('Active');?></th>
-                <th width="50px" data-hide="phone"><?php echo __('Count');?></th>
-                <th width="50px" data-hide="phone"><?php echo __('Actions');?></th>
+                <th width="50px"><?php echo __d('fundraising','ID');?></th>
+                <th><?php echo __d('fundraising','Name');?></th>
+                <th width="50px"><?php echo __d('fundraising','Order');?></th>
+                <th width="50px"><?php echo __d('fundraising','Type');?></th>
+                <th data-hide="phone"><?php echo __d('fundraising','Parent');?></th>
+                <th width="50px" data-hide="phone"><?php echo __d('fundraising','Header');?></th>
+                <th width="50px" data-hide="phone"><?php echo __d('fundraising','Active');?></th>
+                <th width="50px" data-hide="phone"><?php echo __d('fundraising','Count');?></th>
+                <th width="50px" data-hide="phone"><?php echo __d('fundraising','Actions');?></th>
             </tr>
         </thead>
         <tbody>
@@ -100,9 +100,9 @@ $(document).on('hidden.bs.modal', function (e) {
                     <td width="50px" class="reorder"><?php echo  ($category['Category']['active']) ? 'Yes' : 'No' ?></td>
                     <td width="50px" class="reorder"><?php echo  $category['Category']['item_count'] ?></td>
                     <?php if($category['Category']['header']): ?>
-                <td width="50px"><a href="javascript:void(0)" onclick="mooConfirm('<?php echo addslashes(__('Are you sure you want to delete this category? All parent of sub-category it will also be changed to ROOT. This cannot be undone!'));?>', '<?php echo $this->request->base?>/admin/categories/delete/<?php echo $category['Category']['id']?>')"><i class="icon-trash icon-small"></i></a></td>
+                <td width="50px"><a href="javascript:void(0)" onclick="mooConfirm('<?php echo addslashes(__d('fundraising','Are you sure you want to delete this category? All parent of sub-category it will also be changed to ROOT. This cannot be undone!'));?>', '<?php echo $this->request->base?>/admin/categories/delete/<?php echo $category['Category']['id']?>')"><i class="icon-trash icon-small"></i></a></td>
                 <?php else: ?>
-                <td width="50px"><a href="javascript:void(0)" onclick="mooConfirm('<?php echo addslashes(__('Are you sure you want to delete this category? All the items within it will also be deleted. This cannot be undone!'));?>', '<?php echo $this->request->base?>/admin/categories/delete/<?php echo $category['Category']['id']?>')"><i class="icon-trash icon-small"></i></a></td>
+                <td width="50px"><a href="javascript:void(0)" onclick="mooConfirm('<?php echo addslashes(__d('fundraising','Are you sure you want to delete this category? All the items within it will also be deleted. This cannot be undone!'));?>', '<?php echo $this->request->base?>/admin/categories/delete/<?php echo $category['Category']['id']?>')"><i class="icon-trash icon-small"></i></a></td>
                 <?php endif; ?>
                 </tr>
 <?php endforeach ?>

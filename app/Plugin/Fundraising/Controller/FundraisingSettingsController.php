@@ -24,7 +24,7 @@ class FundraisingSettingsController extends FundraisingAppController {
         Cache::clearGroup('menu', 'menu');
 
         $this->QuickSettings->run($this, array("Fundraising"), $id);
-        $this->set('title_for_layout', __('Fundraising Setting'));
+        $this->set('title_for_layout', __d('fundraising','Fundraising Setting'));
     }
 
 }

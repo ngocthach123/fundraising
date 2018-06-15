@@ -18,16 +18,16 @@ $(document).ready(function(){
 	<?php echo $this->Form->submit('', array( 'style' => 'display:none' ));?>
 	</form>
 	
-	<h1><?php echo __('Campaigns Manager');?></h1>
+	<h1><?php echo __d('fundraising','Campaigns Manager');?></h1>
 	<form method="post" action="<?php echo $this->request->base?>/admin/campaigns/delete" id="deleteForm">
 	<table class="mooTable footable" cellpadding="0" cellspacing="0">
 		<thead>
 		<tr>
-			<th><?php echo $this->Paginator->sort('id', __('ID')); ?></th>
-			<th><?php echo $this->Paginator->sort('title', __('Title')); ?></th>
-			<th data-hide="phone"><?php echo $this->Paginator->sort('User.name', __('Author')); ?></th>
-			<th data-hide="phone"><?php echo $this->Paginator->sort('Category.name', __('Category')); ?></th>
-			<th data-hide="phone"><?php echo $this->Paginator->sort('Group.name', __('Group')); ?></th>
+			<th><?php echo $this->Paginator->sort('id', __d('fundraising','ID')); ?></th>
+			<th><?php echo $this->Paginator->sort('title', __d('fundraising','Title')); ?></th>
+			<th data-hide="phone"><?php echo $this->Paginator->sort('User.name', __d('fundraising','Author')); ?></th>
+			<th data-hide="phone"><?php echo $this->Paginator->sort('Category.name', __d('fundraising','Category')); ?></th>
+			<th data-hide="phone"><?php echo $this->Paginator->sort('Group.name', __d('fundraising','Group')); ?></th>
 			<?php if ( $cuser['Role']['is_super'] ): ?>
 			<th width="30"><input type="checkbox" onclick="toggleCheckboxes(this)"></th>
 			<?php endif; ?>
@@ -60,8 +60,8 @@ $(document).ready(function(){
 	</form>
 	
 	<div class="pagination">
-        <?php echo $this->Paginator->prev('« '.__('Previous'), null, null, array('class' => 'disabled')); ?>
+        <?php echo $this->Paginator->prev('« '.__d('fundraising','Previous'), null, null, array('class' => 'disabled')); ?>
 		<?php echo $this->Paginator->numbers(); ?>
-		<?php echo $this->Paginator->next(__('Next').' »', null, null, array('class' => 'disabled')); ?> 
+		<?php echo $this->Paginator->next(__d('fundraising','Next').' »', null, null, array('class' => 'disabled')); ?>
     </div>
 </div>

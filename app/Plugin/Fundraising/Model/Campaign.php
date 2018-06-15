@@ -277,7 +277,7 @@ class Campaign extends FundraisingAppModel {
         $value = trim($check['predefined']);
         if(!preg_match('/^\d+(?:,\d+)*$/', $value))
         {
-           return __('Predefined only allow numbers and commas');
+           return __d('fundraising','Predefined only allow numbers and commas');
         }
 
         return true;

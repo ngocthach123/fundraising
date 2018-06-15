@@ -7,29 +7,29 @@
 		foreach ($donors as $donor):
 			switch($donor['CampaignDonor']['method']){
 				case 'paypal':
-					$method = __('Paypal');
+					$method = __d('fundraising','Paypal');
 				break;
 				default:
-					$method = __('offline payment');
+					$method = __d('fundraising','offline payment');
 					break;
 			}
 	?>
 		<li class="full_content p_m_10">
 			<div class="donor-name">
 				<?php if($donor['CampaignDonor']['anonymous']):?>
-                    <a><?php echo __('Anonymous');?></a>
+                    <a><?php echo __d('fundraising','Anonymous');?></a>
 				<?php elseif($donor['CampaignDonor']['user_id']):?>
                     <a href="<?php echo $donor['User']['moo_href'];?>"><?php echo $donor['CampaignDonor']['name'];?></a>
                 <?php else:?>
                     <a><?php echo $donor['CampaignDonor']['name'];?></a>
 				<?php endif;?>
 			</div>
-			<div class="donor-info"><?php echo __('Donated %s via %s', $currency['Currency']['symbol'].$donor['CampaignDonor']['amount'], $method);?> <?php echo $this->Moo->getTime($donor['CampaignDonor']['created'], Configure::read('core.date_format'), $utz)?></div>
+			<div class="donor-info"><?php echo __d('fundraising','Donated %s via %s', $currency['Currency']['symbol'].$donor['CampaignDonor']['amount'], $method);?> <?php echo $this->Moo->getTime($donor['CampaignDonor']['created'], Configure::read('core.date_format'), $utz)?></div>
 			<div class="donor-status">
 				<?php if($donor['CampaignDonor']['status']):?>
-					<?php echo __('Status');?>: <span class="status-receive"><?php echo __('received') ?></span>
+					<?php echo __d('fundraising','Status');?>: <span class="status-receive"><?php echo __d('fundraising','received') ?></span>
 				<?php else:?>
-					<?php echo __('Status');?>: <span class="status-pending"><?php echo __('pending') ?></span>
+					<?php echo __d('fundraising','Status');?>: <span class="status-pending"><?php echo __d('fundraising','pending') ?></span>
 					<?php if($uid == $campaign['Campaign']['user_id']): ?>
 						<?php
 						 $this->MooPopup->tag(array(
@@ -38,7 +38,7 @@
 							"plugin" => 'fundraising',
 							$donor['CampaignDonor']['id'],
 							)),
-							'title' => __('Receive'), 'innerHtml'=>  __('Receive'), 'class'=>'btn-donor-action', 'target' => ''
+							'title' => __d('fundraising','Receive'), 'innerHtml'=>  __d('fundraising','Receive'), 'class'=>'btn-donor-action', 'target' => ''
 						));
 						?> |
 						<?php
@@ -48,21 +48,21 @@
 							"plugin" => 'fundraising',
 							$donor['CampaignDonor']['id'],
 							)),
-							'title' => __('Delete'), 'innerHtml'=>  __('Delete'), 'class'=>'btn-donor-action', 'target' => ''
+							'title' => __d('fundraising','Delete'), 'innerHtml'=>  __d('fundraising','Delete'), 'class'=>'btn-donor-action', 'target' => ''
 						));
 						?>
 					<?php endif;?>
 				<?php endif;?>
 			</div>
 			<?php if(!empty($donor['CampaignDonor']['message'])):?>
-				<div class="donor-message"><span><?php echo __('Message from donor:')?></span> <?php echo $this->Text->truncate($donor['CampaignDonor']['message'], 150, array('exact' => false));?></div>
+				<div class="donor-message"><span><?php echo __d('fundraising','Message from donor:')?></span> <?php echo $this->Text->truncate($donor['CampaignDonor']['message'], 150, array('exact' => false));?></div>
 			<?php endif;?>
 		</li>
 	<?php
 		endforeach;
 	}
 	else
-		echo '<div class="clear text-center">' . __( 'No more results found') . '</div>';
+		echo '<div class="clear text-center">' . __d('fundraising', 'No more results found') . '</div>';
 	?>
 	<?php if (isset($more_url)&& !empty($more_result)): ?>
 		<?php $this->Html->viewMore($more_url) ?>

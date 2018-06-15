@@ -144,7 +144,7 @@ class FundraisingsController extends FundraisingAppController {
 
 
             $this->set('tags', $tags);
-            $this->set('title_for_layout', __( 'Edit Campaign'));
+            $this->set('title_for_layout', __d('fundraising', 'Edit Campaign'));
         } else {
             $campaign = $this->Campaign->initFields();
 
@@ -153,7 +153,7 @@ class FundraisingsController extends FundraisingAppController {
                 $this->Session->delete('cat_id');
             }
 
-            $this->set('title_for_layout', __( 'Create New Campaign'));
+            $this->set('title_for_layout', __d('fundraising', 'Create New Campaign'));
         }
 
         $this->set('campaign', $campaign);
@@ -183,7 +183,7 @@ class FundraisingsController extends FundraisingAppController {
 
         if(empty($this->request->data['paypal']) && empty($this->request->data['bank'])){
             $response['result'] = 0;
-            $response['message'] = __('Please select payment method');
+            $response['message'] = __d('fundraising','Please select payment method');
             echo json_encode($response);
             exit;
         }elseif(empty($this->request->data['paypal'])){
@@ -410,7 +410,7 @@ class FundraisingsController extends FundraisingAppController {
         $id = intval($id);
         $this->ajax_delete($id);
 
-        $this->Session->setFlash(__( 'Campaign has been deleted'));
+        $this->Session->setFlash(__d('fundraising', 'Campaign has been deleted'));
         $this->redirect('/fundraisings');
     }
 
@@ -480,7 +480,7 @@ class FundraisingsController extends FundraisingAppController {
                     'plugin' => 'Fundraising'
                 ));
             } else {
-                return $this->_jsonError(__('Recipient is required'));
+                return $this->_jsonError(__d('fundraising','Recipient is required'));
             }
         }
         else
@@ -499,7 +499,7 @@ class FundraisingsController extends FundraisingAppController {
                     );
 
                     if ($resp != null && !$resp->success) {
-                        return	$this->_jsonError(__('Invalid security code'));
+                        return	$this->_jsonError(__d('fundraising','Invalid security code'));
                     }
                 }
                 $emails = explode(',', $this->request->data['emails']);
@@ -535,7 +535,7 @@ class FundraisingsController extends FundraisingAppController {
 
         $response = array();
         $response['result'] = 1;
-        $response['msg'] = __d('forum', 'Your invitations have been sent.') . ' <a href="javascript:void(0)" onclick="$(\'#themeModal .modal-content\').load(\''.$this->request->base.'/fundraisings/ajax_invite/'.$this->request->data['campaign_id'].'\');">' . __('Invite more friends') . '</a>';
+        $response['msg'] = __d('forum', 'Your invitations have been sent.') . ' <a href="javascript:void(0)" onclick="$(\'#themeModal .modal-content\').load(\''.$this->request->base.'/fundraisings/ajax_invite/'.$this->request->data['campaign_id'].'\');">' . __d('fundraising','Invite more friends') . '</a>';
         echo json_encode($response);
     }
 
@@ -566,7 +566,7 @@ class FundraisingsController extends FundraisingAppController {
         }
         $response = array(
             'result' => 0,
-            'message' => __('An error has occurred, please try again'),
+            'message' => __d('fundraising','An error has occurred, please try again'),
         );
         echo json_encode($response);exit;
     }
@@ -604,7 +604,7 @@ class FundraisingsController extends FundraisingAppController {
             if(empty($data['accept_term'])){
                 $response = array(
                     'result' => 0,
-                    'message' => __('You must accept the terms and conditions'),
+                    'message' => __d('fundraising','You must accept the terms and conditions'),
                 );
                 echo json_encode($response);exit;
             }
@@ -638,7 +638,7 @@ class FundraisingsController extends FundraisingAppController {
             }else{
                 $response = array(
                     'result' => 0,
-                    'message' => __('An error has occurred, please try again'),
+                    'message' => __d('fundraising','An error has occurred, please try again'),
                 );
                 echo json_encode($response);exit;
             }
@@ -659,7 +659,7 @@ class FundraisingsController extends FundraisingAppController {
             if(empty($data['accept_term'])){
                 $response = array(
                     'result' => 0,
-                    'message' => __('You must accept the terms and conditions'),
+                    'message' => __d('fundraising','You must accept the terms and conditions'),
                 );
                 echo json_encode($response);exit;
             }
@@ -679,7 +679,7 @@ class FundraisingsController extends FundraisingAppController {
                     if ($resp != null && !$resp->success) {
                         $response = array(
                             'result' => 0,
-                            'message' => __('Invalid security code'),
+                            'message' => __d('fundraising','Invalid security code'),
                         );
                         echo json_encode($response);exit;
                     }
@@ -711,7 +711,7 @@ class FundraisingsController extends FundraisingAppController {
                         ));
                     }
 
-                    $this->Session->setFlash(__('Successfully sent'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in'));
+                    $this->Session->setFlash(__d('fundraising','Successfully sent'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in'));
 
                     $response = array(
                         'result' => 1,
@@ -722,7 +722,7 @@ class FundraisingsController extends FundraisingAppController {
                 }else{
                     $response = array(
                         'result' => 0,
-                        'message' => __('An error has occurred, please try again'),
+                        'message' => __d('fundraising','An error has occurred, please try again'),
                     );
                     echo json_encode($response);exit;
                 }
@@ -756,7 +756,7 @@ class FundraisingsController extends FundraisingAppController {
             if(empty($this->request->data['message'])){
                 $response = array(
                     'result' => 0,
-                    'message' => __('Message is required'),
+                    'message' => __d('fundraising','Message is required'),
                 );
                 echo json_encode($response);exit;
             }
@@ -777,7 +777,7 @@ class FundraisingsController extends FundraisingAppController {
                     )
                 );
             }
-            $this->Session->setFlash( __('Donor has been deleted'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
+            $this->Session->setFlash( __d('fundraising','Donor has been deleted'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
 
             $response = array(
                 'result' => 1,
@@ -807,7 +807,7 @@ class FundraisingsController extends FundraisingAppController {
             if(empty($this->request->data['message'])){
                 $response = array(
                     'result' => 0,
-                    'message' => __('Message is required'),
+                    'message' => __d('fundraising','Message is required'),
                 );
                 echo json_encode($response);exit;
             }
@@ -830,7 +830,7 @@ class FundraisingsController extends FundraisingAppController {
                     )
                 );
             }
-            $this->Session->setFlash( __('Status changed'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
+            $this->Session->setFlash( __d('fundraising','Status changed'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
 
             $response = array(
                 'result' => 1,
@@ -969,7 +969,7 @@ class FundraisingsController extends FundraisingAppController {
     }
 
     public function pay_success($id){
-        $this->Session->setFlash( __('Pay successfully'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
+        $this->Session->setFlash( __d('fundraising','Pay successfully'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in') );
         $this->redirect('/fundraisings/view/'.$id);
     }
 

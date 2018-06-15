@@ -15,7 +15,7 @@
                                 <ul>
                                     <li>
                                         <div class="col-md-2">
-                                            <?php echo __('Subject');?>
+                                            <?php echo __d('fundraising','Subject');?>
                                         </div>
                                         <div class="col-md-10">
                                             <?php echo $this->Form->text('subject', array('value' => !empty($mail) ? $mail['FundraisingMail']['subject'] : '')); ?>
@@ -24,11 +24,11 @@
                                     </li>
                                     <li>
                                         <div class="col-md-2">
-                                            <?php echo __('Message');?>
+                                            <?php echo __d('fundraising','Message');?>
                                         </div>
                                         <div class="col-md-10">
                                             <?php echo $this->Form->tinyMCE('content', array('value' => !empty($mail) ? $mail['FundraisingMail']['content'] : '')); ?>
-                                            <p><?php echo __('Please do not change [donor_name] and [donation_url] because it will auto replace by system');?></p>
+                                            <p><?php echo __d('fundraising','Please do not change [donor_name] and [donation_url] because it will auto replace by system');?></p>
                                         </div>
                                         <div class="clear"></div>
                                     </li>

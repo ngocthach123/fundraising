@@ -29,7 +29,7 @@ class FundraisingPluginsController extends FundraisingAppController {
         $this->set('campaigns', $campaigns);
         $this->set('categories', $categories);
         
-        $this->set('title_for_layout', __('Fundraising Manager'));
+        $this->set('title_for_layout', __d('fundraising','Fundraising Manager'));
     }
 
     public function admin_delete() {
@@ -47,7 +47,7 @@ class FundraisingPluginsController extends FundraisingAppController {
                 $this->getEventManager()->dispatch($cakeEvent);
             }
 
-            $this->Session->setFlash( __( 'Campaigns have been deleted'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in' ) );
+            $this->Session->setFlash( __d('fundraising', 'Campaigns have been deleted'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in' ) );
         }
 
         $this->redirect( array(
@@ -64,7 +64,7 @@ class FundraisingPluginsController extends FundraisingAppController {
                 $this->Campaign->save(array('category_id' => $this->request->data['category']));
             }
 
-            $this->Session->setFlash( __( 'Campaigns has been moved'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in' ) );
+            $this->Session->setFlash( __d('fundraising', 'Campaigns has been moved'), 'default', array('class' => 'Metronic-alerts alert alert-success fade in' ) );
         }
 
         $this->redirect($this->referer());

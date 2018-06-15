@@ -1,7 +1,7 @@
 <?php $this->setNotEmpty('west');?>
 <?php $this->start('west'); ?>
 	<div class="box2 filter_block">
-            <h3 class="visible-xs visible-sm"><?php echo __( 'Browse')?></h3>
+            <h3 class="visible-xs visible-sm"><?php echo __d('fundraising', 'Browse')?></h3>
             <div class="box_content">
 		<?php echo $this->element('sidebar/menu'); ?>
                 <?php echo $this->element('lists/categories_list')?>
@@ -15,12 +15,12 @@
     <div class="content_center">
     
         <div class="mo_breadcrumb">
-            <h1><?php echo __( 'Campaigns')?></h1>
+            <h1><?php echo __d('fundraising', 'Campaigns')?></h1>
             <?php 
             if (!empty($uid)):
             ?>
                 <?php
-                echo $this->Html->link(__('Create New Campaign'), array(
+                echo $this->Html->link(__d('fundraising','Create New Campaign'), array(
                     'plugin' => 'Fundraising',
                     'controller' => 'fundraisings',
                     'action' => 'create'

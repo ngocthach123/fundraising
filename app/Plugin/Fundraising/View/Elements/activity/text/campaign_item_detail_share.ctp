@@ -6,7 +6,7 @@
     ?>
 
     <?php
-    echo __('shared %1$s\'s <a href="%2$s">campaign</a>', $this->Moo->getName($campaign['User'], false),
+    echo __d('fundraising','shared %1$s\'s <a href="%2$s">campaign</a>', $this->Moo->getName($campaign['User'], false),
         $campaign['Campaign']['moo_href']
         );
     ?>

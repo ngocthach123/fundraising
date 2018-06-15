@@ -11,7 +11,7 @@ $name = key($subject);
     ?>
 
     <?php
-    echo __('shared %1$s\'s <a href="%2$s">post</a>', "<a href=" . $parentFeed['User']['moo_href'] . "> ". $parentFeed['User']['name'] ."</a>",    
+    echo __d('fundraising','shared %1$s\'s <a href="%2$s">post</a>', "<a href=" . $parentFeed['User']['moo_href'] . "> ". $parentFeed['User']['name'] ."</a>",
                 $this->Html->url(array(
                     'plugin' => false,
                     'controller' => 'users',
