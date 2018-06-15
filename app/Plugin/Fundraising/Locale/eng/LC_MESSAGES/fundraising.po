@@ -122,30 +122,30 @@ msgstr ""
 msgid "Are you sure you want to remove this campaign?"
 msgstr ""
 
-#: Lib/FundraisingListener.php:147;164;191
+#: Lib/FundraisingListener.php:149;166;193
 msgid "Fundraising"
 msgstr ""
 
-#: Lib/FundraisingListener.php:198
+#: Lib/FundraisingListener.php:200
 msgid "Find Fundraising"
 msgstr ""
 
-#: Lib/FundraisingListener.php:202
+#: Lib/FundraisingListener.php:204
 msgid "Posted by"
 msgstr ""
 
-#: Lib/FundraisingListener.php:260;261
+#: Lib/FundraisingListener.php:262;263
 #: View/Elements/activity/content/campaign_create_share.ctp:32;36
 #: View/Elements/activity/share/campaign_create.ctp:20;24
 #: View/Elements/activity/text/campaign_create.ctp:12;16
 msgid "created a new campaign"
 msgstr ""
 
-#: Lib/FundraisingListener.php:292;293
+#: Lib/FundraisingListener.php:294;295
 msgid "shared %s's campaign"
 msgstr ""
 
-#: Lib/FundraisingListener.php:338;339
+#: Lib/FundraisingListener.php:340;341
 #: View/Elements/activity/text/campaign_donate.ctp:12;16
 msgid "donated for a campaign"
 msgstr ""
@@ -396,6 +396,7 @@ msgstr ""
 #: View/FundraisingCategories/admin_create.ctp:145
 #: View/Fundraisings/delete_donor.ctp:36
 #: View/Fundraisings/receive_donor.ctp:36
+#: View/Fundraisings/view_map.ctp:14
 msgid "Close"
 msgstr ""
 
@@ -678,5 +679,9 @@ msgstr ""
 
 #: View/Fundraisings/receive_donor.ctp:22
 msgid "Are you sure you want to change status to received, email will send to notify donor"
+msgstr ""
+
+#: View/Fundraisings/view_map.ctp:3
+msgid "Map"
 msgstr ""
 
