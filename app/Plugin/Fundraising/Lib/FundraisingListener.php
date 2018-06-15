@@ -20,12 +20,16 @@ class FundraisingListener implements CakeEventListener
             'Controller.Search.search' => 'search',
             'Controller.Search.suggestion' => 'suggestion',
             'profile.afterRenderMenu'=> 'profileAfterRenderMenu',
+            'Plugin.View.Api.Search' => 'apiSearch',
 
             'StorageHelper.campaigns.getUrl.local' => 'storage_geturl_local',
             'StorageHelper.campaigns.getUrl.amazon' => 'storage_geturl_amazon',
             'StorageAmazon.campaigns.getFilePath' => 'storage_amazon_get_file_path',
-
             'StorageTaskAwsCronTransfer.execute' => 'storage_task_transfer',
+
+            'ApiHelper.renderAFeed.campaign_create' => 'exportCampaignCreate',
+            'ApiHelper.renderAFeed.campaign_item_detail_share' => 'exportCampaignItemDetailShare',
+            'ApiHelper.renderAFeed.campaign_donate' => 'exportCampaignDonate',
         );
     }
 
@@ -212,5 +216,141 @@ class FundraisingListener implements CakeEventListener
             $total = $campaignModel->getTotalCampaigns(array('Campaign.user_id'=>$subject['User']['id']));
             echo $view->element('menu_profile',array('count'=>$total),array('plugin'=>'Fundraising'));
         }
+    }
+
+    public function apiSearch($event)
+    {
+        $view = $event->subject();
+        $items = &$event->data['items'];
+        $type = $event->data['type'];
+        $viewer = MooCore::getInstance()->getViewer();
+        $utz = $viewer['User']['timezone'];
+        if ($type == 'Fundraising' && isset($view->viewVars['campaigns']) && count($view->viewVars['campaigns']))
+        {
+            $helper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
+            foreach ($view->viewVars['campaigns'] as $item){
+                $items[] = array(
+                    'id' => $item["Campaign"]['id'],
+                    'url' => FULL_BASE_URL.$item['Campaign']['moo_href'],
+                    'avatar' =>  $helper->getImage($item),
+                    'owner_id' => $item["Campaign"]['user_id'],
+                    'title_1' => $item["Campaign"]['moo_title'],
+                    'title_2' => __( 'Posted by') . ' ' . $view->Moo->getNameWithoutUrl($item['User'], false) . ' ' .$view->Moo->getTime( $item["Campaign"]['created'], Configure::read('core.date_format'), $utz ),
+                    'created' => $item["Campaign"]['created'],
+                    'type' => "Fundraising"
+                );
+            }
+        }
+    }
+
+    public function exportCampaignCreate($e)
+    {
+        $data = $e->data['data'];
+        $actorHtml = $e->data['actorHtml'];
+
+        $campaignModel = MooCore::getInstance()->getModel("Fundraising_Campaign");
+        $campaign = $campaignModel->findById($data['Activity']['item_id']);
+        $helper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
+
+        list($title_tmp,$target) = $e->subject()->getActivityTarget($data,$actorHtml);
+        if(!empty($title_tmp)){
+            $title =  $title_tmp['title'];
+            $titleHtml = $title_tmp['titleHtml'];
+        }else{
+            $title = __d('fundraising','created a new campaign');
+            $titleHtml = $actorHtml . ' ' . __d('fundraising','created a new campaign');
+        }
+        $e->result['result'] = array(
+            'type' => 'create',
+            'title' => $title,
+            'titleHtml' => $titleHtml,
+            'objects' => array(
+                'type' => 'Fundraising_Campaign',
+                'id' => $campaign['Campaign']['id'],
+                'url' => FULL_BASE_URL . str_replace('?','',mb_convert_encoding($campaign['Campaign']['moo_href'], 'UTF-8', 'UTF-8')),
+                'description' => $e->subject()->Text->convert_clickable_links_for_hashtags($e->subject()->Text->truncate(strip_tags(str_replace(array('<br>', '&nbsp;'), array(' ', ''), $campaign['Campaign']['body'])), 200, array('eclipse' => '')), Configure::read('Fundraising.fundraising_hashtag_enabled')),
+                'title' => h($campaign['Campaign']['moo_title']),
+                'images' => array('850'=>$helper->getImage($campaign,array('prefix'=> ''))),
+            ),
+            'target' => $target,
+        );
+    }
+
+    public function exportCampaignItemDetailShare($e)
+    {
+        $data = $e->data['data'];
+        $actorHtml = $e->data['actorHtml'];
+
+        $campaignModel = MooCore::getInstance()->getModel("Fundraising_Campaign");
+        $campaign = $campaignModel->findById($data['Activity']['parent_id']);
+        $helper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
+
+        $target = array();
+
+        if (isset($data['Activity']['parent_id']) && $data['Activity']['parent_id'])
+        {
+            $title = $data['User']['name'] . ' ' . __d('fundraising',"shared %s's campaign", $campaign['User']['name']);
+            $titleHtml = $actorHtml . ' ' . __d('fundraising',"shared %s's campaign", $e->subject()->Html->link($campaign['User']['name'], FULL_BASE_URL . $campaign['User']['moo_href']));
+            $target = array(
+                'url' => FULL_BASE_URL . $campaign['User']['moo_href'],
+                'id' => $campaign['User']['id'],
+                'name' => $campaign['User']['name'],
+                'type' => 'User',
+            );
+        }
+
+        list($title_tmp,$target) = $e->subject()->getActivityTarget($data,$actorHtml,true);
+        if(!empty($title_tmp)){
+            $title .=  $title_tmp['title'];
+            $titleHtml .= $title_tmp['titleHtml'];
+        }
+
+        $e->result['result'] = array(
+            'type' => 'share',
+            'title' => $title,
+            'titleHtml' => $titleHtml,
+            'objects' => array(
+                'type' => 'Fundraising_Campaign',
+                'id' => $campaign['Campaign']['id'],
+                'url' => FULL_BASE_URL . str_replace('?','',mb_convert_encoding($campaign['Campaign']['moo_href'], 'UTF-8', 'UTF-8')),
+                'description' => $e->subject()->Text->convert_clickable_links_for_hashtags($e->subject()->Text->truncate(strip_tags(str_replace(array('<br>', '&nbsp;'), array(' ', ''), $campaign['Campaign']['body'])), 200, array('eclipse' => '')), Configure::read('Fundraising.fundraising_hashtag_enabled')),
+                'title' => h($campaign['Campaign']['moo_title']),
+                'images' => array('850'=>$helper->getImage($campaign,array('prefix'=>''))),
+            ),
+            'target' => $target,
+        );
+    }
+
+    public function exportCampaignDonate($e)
+    {
+        $data = $e->data['data'];
+        $actorHtml = $e->data['actorHtml'];
+
+        $campaignModel = MooCore::getInstance()->getModel("Fundraising_Campaign");
+        $campaign = $campaignModel->findById($data['Activity']['item_id']);
+        $helper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
+
+        list($title_tmp,$target) = $e->subject()->getActivityTarget($data,$actorHtml);
+        if(!empty($title_tmp)){
+            $title =  $title_tmp['title'];
+            $titleHtml = $title_tmp['titleHtml'];
+        }else{
+            $title = __d('fundraising','donated for a campaign');
+            $titleHtml = $actorHtml . ' ' . __d('fundraising','donated for a campaign');
+        }
+        $e->result['result'] = array(
+            'type' => 'create',
+            'title' => $title,
+            'titleHtml' => $titleHtml,
+            'objects' => array(
+                'type' => 'Fundraising_Campaign',
+                'id' => $campaign['Campaign']['id'],
+                'url' => FULL_BASE_URL . str_replace('?','',mb_convert_encoding($campaign['Campaign']['moo_href'], 'UTF-8', 'UTF-8')),
+                'description' => $e->subject()->Text->convert_clickable_links_for_hashtags($e->subject()->Text->truncate(strip_tags(str_replace(array('<br>', '&nbsp;'), array(' ', ''), $campaign['Campaign']['body'])), 200, array('eclipse' => '')), Configure::read('Fundraising.fundraising_hashtag_enabled')),
+                'title' => h($campaign['Campaign']['moo_title']),
+                'images' => array('850'=>$helper->getImage($campaign,array('prefix'=> ''))),
+            ),
+            'target' => $target,
+        );
     }
 }
