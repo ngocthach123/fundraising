@@ -1,7 +1,7 @@
 <!--Begin Center-->
 <div class="bar-content full_content p_m_10">
     <div class="content_center">
-        <div class="post_body topic_view_body">
+        <div class="post_body campaign_view_body">
             <?php if(!empty($uid)): ?>
             <div class="list_option">
                 <div class="dropdown">
@@ -76,10 +76,10 @@
             <h3><?php echo ('Infomation about the campaign');?></h3>
             <div class="campaign-location"><?php echo __('Location:');?> <a><?php echo $campaign['Campaign']['location'];?></a></div>
             <div class="post_content">
-                <?php echo $this->Moo->cleanHtml($this->Text->convert_clickable_links_for_hashtags( $campaign['Campaign']['body'] , Configure::read('Campaign.topic_hashtag_enabled')))?>
+                <?php echo $this->Moo->cleanHtml($this->Text->convert_clickable_links_for_hashtags( $campaign['Campaign']['body'] , Configure::read('Fundraising.fundraising_hashtag_enabled')))?>
             </div>
-            <div class="extra_info"><?php echo __( 'Posted in')?> <a href="<?php echo $this->request->base?>/topics/index/<?php echo $campaign['Campaign']['category_id']?>/<?php echo seoUrl($campaign['Category']['name'])?>"><strong><?php echo $campaign['Category']['name']?></strong></a> <?php echo $this->Moo->getTime($campaign['Campaign']['created'], Configure::read('core.date_format'), $utz)?></div>
-            <?php $this->Html->rating($campaign['Campaign']['id'],'topics', 'Campaign'); ?>
+            <div class="extra_info"><?php echo __( 'Posted in')?> <a href="<?php echo $this->request->base?>/fundraisings/index/<?php echo $campaign['Campaign']['category_id']?>/<?php echo seoUrl($campaign['Category']['name'])?>"><strong><?php echo $campaign['Category']['name']?></strong></a> <?php echo $this->Moo->getTime($campaign['Campaign']['created'], Configure::read('core.date_format'), $utz)?></div>
+            <?php $this->Html->rating($campaign['Campaign']['id'],'campaigns', 'Campaign'); ?>
 
             <div class="clear"></div>
         </div>
@@ -103,6 +103,6 @@
 </div>
 <?php endif; ?>
 
-<div class="bar-content full_content p_m_10 topic-comment">
+<div class="bar-content full_content p_m_10 campaign-comment">
     <?php echo $this->renderComment();?>
 </div>

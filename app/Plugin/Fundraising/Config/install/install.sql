@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}campaign_donors` (
   `other_detail` text COLLATE utf8_unicode_ci NOT NULL,
   `created` datetime NOT NULL,
   `target_id` int(11) NOT NULL,
+  `anonymous` TINYINT NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1;
 

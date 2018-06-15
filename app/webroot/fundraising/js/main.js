@@ -317,8 +317,10 @@
                 if(data.result == '1'){
                     $.post(mooConfig.url.base + "/fundraisings/pay_offline/", function (data) {
                         $('#pay_step_1 li').hide();
-                        $('#errorMessage').remove();
-                        $('#formDonation').append(data);
+                        $('#wrap_btn_payoffline').show();
+                        $('#wrap_errorMessage').show();
+                        $('#formDonation').prepend(data);
+                        $('#captcha').attr('style', 'display: flex;');
                     });
                 }else{
                     $('#msg_success').hide();

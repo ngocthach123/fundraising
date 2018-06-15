@@ -218,7 +218,7 @@ class FundraisingPlugin implements MooPlugin{
             $content = <<<EOF
 		    <p>[header]</p>
 			<p>You have been invited to donate the campaign "[campaign_title]". Please click the following link to view it:</p>
-            <p><a href="[link]">[topic_title]</a></p>
+            <p><a href="[link]">[campaign_title]</a></p>
 			<p>[footer]</p>
 EOF;
             $data_translate['content'] = $content;

@@ -39,8 +39,8 @@ class FundraisingsController extends FundraisingAppController {
             $campaigns = $this->Campaign->getCampaigns('category', $cat_id);
             $more_campaigns = $this->Campaign->getCampaigns('category', $cat_id,2);
         }else{
-            $campaigns = $this->Campaign->getCampaigns();
-            $more_campaigns = $this->Campaign->getCampaigns(null,null,2);
+            $campaigns = $this->Campaign->getCampaigns('open');
+            $more_campaigns = $this->Campaign->getCampaigns('open',null,2);
         }
         if(!empty($more_campaigns)){
             $more_result = 1;
@@ -402,8 +402,8 @@ class FundraisingsController extends FundraisingAppController {
     }
 
     /*
-     * Delete topic
-     * @param int $id - topic id to delete
+     * Delete campaign
+     * @param int $id - campaign id to delete
      */
 
     public function do_delete($id = null) {
@@ -609,11 +609,7 @@ class FundraisingsController extends FundraisingAppController {
                 echo json_encode($response);exit;
             }
 
-            if(empty($data['anonymous'])){
-                $data['user_id'] = $uid ? $uid : -1;
-            }else{
-                $data['user_id'] = 0;
-            }
+            $data['user_id'] = $uid;
 
             if(empty($data['hide_feed'])){
                 $hide_feed = 0;
@@ -654,7 +650,7 @@ class FundraisingsController extends FundraisingAppController {
             $this->loadModel('Fundraising.CampaignDonor');
 
             $data = $this->request->data;
-            $uid = $this->Auth->user('id') ? $this->Auth->user('id') : -1;
+            $uid = $this->Auth->user('id');
             $this->CampaignDonor->set($data);
             $this->_validateData($this->CampaignDonor);
 
@@ -681,12 +677,15 @@ class FundraisingsController extends FundraisingAppController {
                     );
 
                     if ($resp != null && !$resp->success) {
-                        echo __('Invalid security code');
-                        return;
+                        $response = array(
+                            'result' => 0,
+                            'message' => __('Invalid security code'),
+                        );
+                        echo json_encode($response);exit;
                     }
                 }
 
-                $data['user_id'] = empty($data['anonymous']) ? $uid : 0;
+                $data['user_id'] = $uid;
                 $data['method'] = 'offline';
                 $data['status'] = 0;
                 $this->CampaignDonor->set($data);
@@ -815,6 +814,8 @@ class FundraisingsController extends FundraisingAppController {
 
             $this->CampaignDonor->updateStatus($id, 1);
             $this->Campaign->updateTotalRaised($donor['CampaignDonor']['target_id']);
+            $user_id = !$donor['CampaignDonor']['anonymous'] ? $donor['CampaignDonor']['user_id'] : -1;
+            $this->Campaign->updateLastDonor($donor['CampaignDonor']['target_id'], $user_id);
 
             //send mail
             if(!empty($donor['CampaignDonor']['email'])) {
@@ -914,6 +915,8 @@ class FundraisingsController extends FundraisingAppController {
 
                     $this->Campaign->updateCounter($donor['CampaignDonor']['target_id'], 'donor_count', array('CampaignDonor.target_id' => $donor['CampaignDonor']['target_id'], 'CampaignDonor.status <>' => 2), 'CampaignDonor');
                     $this->Campaign->updateTotalRaised($donor['CampaignDonor']['target_id']);
+                    $user_id = !$donor['CampaignDonor']['anonymous'] ? $donor['CampaignDonor']['user_id'] : -1;
+                    $this->Campaign->updateLastDonor($donor['CampaignDonor']['target_id'], $user_id);
 
                     //create feed
                     if (!$hide_feed) {

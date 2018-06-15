@@ -28,20 +28,3 @@
     </div>
     <div class="clear"></div>
 </li>
-<?php if ($this->Moo->isRecaptchaEnabled()): ?>
-    <li>
-        <div class="col-md-2"></div>
-        <div class="col-md-10">
-            <div class="captcha_box">
-                <script src='<?php echo $this->Moo->getRecaptchaJavascript();?>'></script>
-                <div class="g-recaptcha" data-sitekey="<?php echo $this->Moo->getRecaptchaPublickey()?>"></div>
-            </div>
-        </div>
-    </li>
-<?php endif; ?>
-<li>
-    <a id="btn_send_payoffline" class='btn btn-action'><?php echo __d('fundraising', 'Send')?></a>
-</li>
-<li>
-    <div class="error-message" id="errorMessage" style="display:none"></div>
-</li>

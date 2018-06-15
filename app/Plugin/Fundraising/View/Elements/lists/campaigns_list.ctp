@@ -41,8 +41,12 @@
             <div class="campaign-info">
                 <a class="title" href="<?php echo  $this->request->base ?>/fundraisings/view/<?php echo  $campaign['Campaign']['id'] ?>/<?php echo  seoUrl($campaign['Campaign']['title']) ?>"><?php echo  h($campaign['Campaign']['title']) ?></a>
                 <div class="extra_info">
-                    <?php if(!empty($topic['LastDonor'])):?>
-                        <?php echo __( 'Last donated by %s', $this->Moo->getName($campaign['LastDonor'], false))?>
+                    <?php if($campaign['Campaign']['lastdonor_id'] != 0):?>
+                        <?php if($campaign['Campaign']['lastdonor_id'] == '-1'):?>
+                            <?php echo __( 'Last donated by %s', '<a>'.__('Anonymous').'</a>')?>
+                        <?php else:?>
+                            <?php echo __( 'Last donated by %s', $this->Moo->getName($campaign['LastDonor'], false))?>
+                        <?php endif;?>
                         <?php echo $this->Moo->getTime( $campaign['Campaign']['last_donate'], Configure::read('core.date_format'), $utz )?>
                     <?php else:?>
                         <?php echo __( 'Posted by %s', $this->Moo->getName($campaign['User'], false))?>

@@ -46,7 +46,7 @@
                                     <li>
                                         <label class="form-label"><?php echo __('Leave your message (optional)');?></label>:
                                         <?php echo $this->Form->textarea( 'message', array( 'value' => '') ); ?>
-                                        <span class="form-note"><?php echo __('Let them know why you donated, to honour a loved one or send a word of encouragement. Your comment will appear on the campiagn page');?></span>
+                                        <span class="form-note"><?php echo __('Let them know why you donated, to honour a loved one or send a word of encouragement. Your comment will appear on the campaign page');?></span>
                                     </li>
                                     <li>
                                         <?php
@@ -59,6 +59,20 @@
                                         ?>
                                         <a id="view_term" href="#"><?php echo __('terms and conditions');?></a>
                                         <div id="term_content"><?php echo $campaign['Campaign']['term'];?></div>
+                                    </li>
+                                    <?php if ($this->Moo->isRecaptchaEnabled()): ?>
+                                        <li id="captcha" style="display:none">
+                                            <div class="col-md-2"></div>
+                                            <div class="col-md-10">
+                                                <div class="captcha_box">
+                                                    <script src='<?php echo $this->Moo->getRecaptchaJavascript();?>'></script>
+                                                    <div class="g-recaptcha" data-sitekey="<?php echo Configure::read('core.recaptcha_publickey')?>"></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    <?php endif; ?>
+                                    <li id="wrap_btn_payoffline" style="display: none">
+                                        <a id="btn_send_payoffline" class='btn btn-action'><?php echo __d('fundraising', 'Send')?></a>
                                     </li>
                                 </form>
                                 <?php if($campaign['Campaign']['bank']):?>
@@ -91,7 +105,7 @@
                                         <a id="btn_pay_offline" class='btn btn-action'><?php echo __d('fundraising' ,'Pay Offline')?></a>
                                     <?php endif;?>
                                 </li>
-                                <li>
+                                <li id="wrap_errorMessage">
                                     <div class="error-message" id="errorMessage" style="display:none"></div>
                                 </li>
                             </ul>

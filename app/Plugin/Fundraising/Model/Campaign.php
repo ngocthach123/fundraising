@@ -161,6 +161,17 @@ class Campaign extends FundraisingAppModel {
 
                 break;
 
+            case 'open':
+                $cond['OR'] = array(
+                    'Campaign.expire > CURDATE()',
+                    'Campaign.expire IS NULL',
+                );
+                break;
+            case 'expire':
+                $cond = array(
+                    'Campaign.expire < CURDATE()',
+                );
+                break;
             default:
                 $order = 'Campaign.id desc';
         }
@@ -224,14 +235,14 @@ class Campaign extends FundraisingAppModel {
 
     public function getTopicHashtags($qid, $limit = RESULTS_LIMIT,$page = 1){
         $cond = array(
-            'Topic.id' => $qid,
+            'Campaign.id' => $qid,
         );
 
-        //only get topics of active user
+        //only get campaigns of active user
         $cond['User.active'] = 1;
         $cond = $this->addBlockCondition($cond);
-        $topics = $this->find( 'all', array( 'conditions' => $cond, 'limit' => $limit, 'page' => $page ) );
-        return $topics;
+        $campaigns = $this->find( 'all', array( 'conditions' => $cond, 'limit' => $limit, 'page' => $page ) );
+        return $campaigns;
     }
 
     public function updateCounter($id, $field = 'comment_count',$conditions = '',$model = 'Comment') {
@@ -250,6 +261,11 @@ class Campaign extends FundraisingAppModel {
         $totalAmount = $modelObj->find('list', array('conditions' => array('CampaignDonor.target_id' => $id, 'CampaignDonor.status = 1'),'fields' => array('total')));
         $this->id = $id;
         $this->saveField('raised_amount', $totalAmount[key($totalAmount)]);
+    }
+
+    public function updateLastDonor($id, $donor_id) {
+        $this->id = $id;
+        $this->saveField('lastdonor_id', $donor_id);
     }
 
     public function getTotalCampaigns($conditions = array())

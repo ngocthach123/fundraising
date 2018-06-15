@@ -16,10 +16,10 @@
 	?>
 		<li class="full_content p_m_10">
 			<div class="donor-name">
-				<?php if($donor['CampaignDonor']['user_id'] > 0):?>
-					<a href="<?php echo $donor['User']['moo_href'];?>"><?php echo $donor['CampaignDonor']['name'];?></a>
-				<?php elseif($donor['CampaignDonor']['user_id'] == 0):?>
-					<a><?php echo __('Anonymous');?></a>
+				<?php if($donor['CampaignDonor']['anonymous']):?>
+                    <a><?php echo __('Anonymous');?></a>
+				<?php elseif($donor['CampaignDonor']['user_id']):?>
+                    <a href="<?php echo $donor['User']['moo_href'];?>"><?php echo $donor['CampaignDonor']['name'];?></a>
                 <?php else:?>
                     <a><?php echo $donor['CampaignDonor']['name'];?></a>
 				<?php endif;?>
