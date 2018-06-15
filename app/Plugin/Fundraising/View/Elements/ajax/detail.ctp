@@ -74,7 +74,7 @@
                 <?php endif;?>
             </div>
             <h3><?php echo ('Infomation about the campaign');?></h3>
-            <div class="campaign-location"><?php echo __d('fundraising','Location:');?> <a><?php echo $campaign['Campaign']['location'];?></a></div>
+            <div class="campaign-location"><?php echo __d('fundraising','Location:');?> <a href="javascript:void(0)" id="view_map"><?php echo $campaign['Campaign']['location'];?></a></div>
             <div class="post_content">
                 <?php echo $this->Moo->cleanHtml($this->Text->convert_clickable_links_for_hashtags( $campaign['Campaign']['body'] , Configure::read('Fundraising.fundraising_hashtag_enabled')))?>
             </div>

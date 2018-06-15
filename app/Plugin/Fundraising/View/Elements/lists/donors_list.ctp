@@ -71,7 +71,7 @@
 
 <?php if($this->request->is('ajax')): ?>
 <script type="text/javascript">
-    require(["jquery","mooCampaign"], function($,mooFundraising) {
+    require(["jquery","mooFundraising"], function($,mooFundraising) {
         mooFundraising.initOnDonorListing();
     });
 </script>

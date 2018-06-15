@@ -22,16 +22,16 @@ class FundraisingHelper extends AppHelper
         if (!MooCore::getInstance()->checkPermission(null, 'fundraising_view'))
             return null;
 
-        $fundraisingModel = MooCore::getInstance()->getModel("Fundraising.Fundraising");
-        $fundraisings = $fundraisingModel->find('all', array(
-            'conditions' => array('Fundraising.group_id' => 0),
+        $campaignModel = MooCore::getInstance()->getModel("Fundraising.Campaign");
+        $campaigns = $campaignModel->find('all', array(
+            'conditions' => array(),
             'limit' => $limit,
             'offset' => $offset
         ));
 
         $urls = array();
-        foreach ($fundraisings as $fundraising) {
-            $urls[] = FULL_BASE_URL . $fundraising['Fundraising']['moo_href'];
+        foreach ($campaigns as $campaign) {
+            $urls[] = FULL_BASE_URL . $campaign['Campaign']['moo_href'];
         }
 
         return $urls;
@@ -58,6 +58,24 @@ class FundraisingHelper extends AppHelper
     public function checkSeeComment($fundraising, $uid)
     {
         return true;
+    }
+
+    public function getLngLatByAddress($address) {
+        if($address != null)
+        {
+            $address = urlencode($address);
+            $geocode = file_get_contents('https://maps.google.com/maps/api/geocode/json?address=' . $address . '&sensor=false&key='.Configure::read('core.google_dev_key'));
+            $output = json_decode($geocode);
+            $lat = !empty($output->results[0]->geometry->location->lat) ? $output->results[0]->geometry->location->lat : 0;
+            $lng = !empty($output->results[0]->geometry->location->lng) ? $output->results[0]->geometry->location->lng : 0;
+            $lat = str_replace(',', '.', $lat);
+            $lng = str_replace(',', '.', $lng);
+            return array(
+                'lng' => $lng,
+                'lat' => $lat
+            );
+        }
+        return array('lng' => 0, 'lat' => 0);
     }
 
 }

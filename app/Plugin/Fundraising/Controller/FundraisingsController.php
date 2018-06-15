@@ -993,4 +993,20 @@ class FundraisingsController extends FundraisingAppController {
 
         $this->redirect('/fundraisings/view/'.$donor['Campaign']['id']);
     }
+
+    public function view_map()
+    {
+        $address = $this->request->data['address'];
+        if(!empty($address))
+        {
+            $fundraisingHelper = MooCore::getInstance()->getHelper('Fundraising_Fundraising');
+            $lnglat = $fundraisingHelper->getLngLatByAddress($address);
+
+            $this->set(array(
+                'address' => $address,
+                'lng' => $lnglat['lng'],
+                'lat' => $lnglat['lat'],
+            ));
+        }
+    }
 }

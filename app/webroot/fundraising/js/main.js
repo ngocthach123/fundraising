@@ -113,6 +113,23 @@
 
         // bind action to button delete
         deleteCampaign();
+
+        viewMap();
+    }
+
+    var viewMap = function()
+    {
+        $('#view_map').unbind('click');
+        $('#view_map').click(function() {
+            address = $(this).html();
+
+            $('#campaignModal .modal-content').empty().append('');
+            $('#campaignModal').modal();
+            $.post(mooConfig.url.base + "/fundraisings/view_map", 'address=' + address, function(data){
+                $('#campaignModal .modal-content').empty().append(data);
+            });
+        });
+
     }
 
     var initOnListing = function(){
@@ -405,6 +422,33 @@
         });
     }
 
+    var initViewMap = function() {
+        var myOptions = {
+            zoom:15,
+             center:new google.maps.LatLng($('#map_canvas').attr('lat'), $('#map_canvas').attr('lng')),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+
+        var infowindow = new google.maps.InfoWindow();
+
+        //add marker
+        var marker;
+        var address = $('#map_canvas').attr('address');
+
+        marker = new google.maps.Marker({
+            position: new google.maps.LatLng($('#map_canvas').attr('lat'), $('#map_canvas').attr('lng')),
+            map: map,
+        });
+
+        google.maps.event.addListener(marker, 'click', (function(marker) {
+            return function() {
+                infowindow.setContent(address);
+                infowindow.open(map, marker);
+            }
+        })(marker));
+    }
+
     return {
         initOnCreate: initOnCreate,
         initOnView : initOnView,
@@ -415,6 +459,7 @@
         initDonation : initDonation,
         initOnDonorListing : initOnDonorListing,
         initDeleteDonor : initDeleteDonor,
-        initReceiveDonor : initReceiveDonor
+        initReceiveDonor : initReceiveDonor,
+        initViewMap : initViewMap
     }
 }));
